@@ -1,0 +1,9 @@
+#universe {
+    width: 500px;
+    height: 500px;
+}
+#universe,
+#universe td {
+    border: 1px solid #000;
+    border-collapse: collapse;
+}
