@@ -10,10 +10,14 @@ var population = {
 
 document.addEventListener('DOMContentLoaded', function() {
     createUniverse(UNIVERSE_WIDTH, UNIVERSE_HEIGHT);
-    //createRandomLife(5);
-    populateUniverse();
     addTimeController();
+    populateUniverse();
     console.log(population.layout);
+
+    nextGenButton.onclick = function(){
+        createNextGeneration();
+    };
+
 }, false);
 
 /**
@@ -40,8 +44,11 @@ function createUniverse(universeWidth = 30, universeHeight = 30) {
  * Generating random population layout. 
  */
 function createRandomPopulationLayout() {
-    for (let i = 0; i < universeSize; i++) {
-        population.layout[i] = getRandomNumberBetweenZeroAndN(2); // 0 or 1
+    for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
+        population.layout.push([]);
+        for (let j = 0; j < UNIVERSE_WIDTH; j++) {
+            population.layout[i].push(getRandomNumberBetweenZeroAndN(2)); // 0 or 1
+        }
     }
 }
 
@@ -50,28 +57,11 @@ function createRandomPopulationLayout() {
  */
 function populateUniverse() {
     createRandomPopulationLayout();
-    for (let i = 0; i < population.layout.length; i++) {
-        if (population.layout[i] == 1) {
-            document.getElementsByTagName("td")[i].classList.add('alive');
-        }
-    }
-}
-
-/**
- * Adding fixed number of alive cells randomly to the grid.
- * @param {int} numOfCells - number of alive cells to create 
- */
-function createRandomLife(numOfCells = 10) {
-    if (numOfCells > universeSize) {
-        return false; // no infinite loop
-    }
-    else {
-        for (let i = 0; i < numOfCells; i++) {
-            randNum = getRandomNumberBetweenZeroAndN(universeSize);
-            while (document.getElementsByTagName("td")[randNum].classList.contains('alive')) {
-                randNum = getRandomNumberBetweenZeroAndN(universeSize);
+    for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
+        for (let j = 0; j < UNIVERSE_WIDTH; j++) {
+            if (population.layout[i][j] == 1) {
+                document.getElementsByTagName("tr")[i].getElementsByTagName("td")[j].classList.add('alive');
             }
-            document.getElementsByTagName("td")[randNum].classList.add('alive');
         }
     }
 }
@@ -96,7 +86,15 @@ function addTimeController() {
 }
 
 function createNextGeneration() {
-    for (let i = 0; i < universeSize; i++) {
-        let currentCellStatus = population.layout[i]; 
+    let neighbourCount = 0; // num of living cells surrounding the current cell
+    for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
+        for (let j = 0; j < UNIVERSE_WIDTH; j++) {
+            try {
+                console.log(i - 1 + ', ' + j + ' : ' + population.layout[i - 1][j]);
+            } catch(e) {
+                console.log(i);
+            }
+            
+        }
     }
 }
