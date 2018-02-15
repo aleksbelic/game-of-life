@@ -1,10 +1,17 @@
-const UNIVERSE_WIDTH = 5;
-const UNIVERSE_HEIGHT = 5;
+const UNIVERSE_WIDTH = 3;
+const UNIVERSE_HEIGHT = 3;
 var universeSize = UNIVERSE_WIDTH * UNIVERSE_HEIGHT;
+
+var population = {
+    alive: [],
+    dead: [],
+    layout: [1,1,1,0,1,0,0,0,1],
+}
 
 document.addEventListener('DOMContentLoaded', function(){
     createUniverse(UNIVERSE_WIDTH, UNIVERSE_HEIGHT);
-    createRandomLife(5);
+    //createRandomLife(5);
+    populateUniverse();
 }, false);
 
 /**
@@ -25,6 +32,27 @@ function createUniverse(universeWidth = 30, universeHeight = 30) {
         universe.appendChild(universeRow);
     }
     document.body.appendChild(universe)
+}
+
+/** 
+ * Adding population to the grid. 
+ */
+function populateUniverse() {
+    if (population.layout.length > universeSize) {
+        throw "Univers is overpopulated! Exiting simpulation.";
+    }
+    else {
+        for (var i = 0; i < population.layout.length; i++) {
+            if (population.layout[i] == 1) {
+                document.getElementsByTagName("td")[i].classList.add('alive');
+            }
+            /*
+            else {
+                document.getElementsByTagName("td")[i].classList.remove('alive');
+            }
+            */
+        }
+    }
 }
 
 /**
