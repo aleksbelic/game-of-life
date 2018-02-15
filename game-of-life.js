@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     //createRandomLife(5);
     populateUniverse();
     addTimeController();
+    console.log(population.layout);
 }, false);
 
 /**
@@ -21,12 +22,12 @@ document.addEventListener('DOMContentLoaded', function() {
  * @param {int} universeHeight - number of cells in a column
  */
 function createUniverse(universeWidth = 30, universeHeight = 30) {
-    var universe = document.createElement('table');
+    let universe = document.createElement('table');
     universe.id = 'universe';
-    for (var i = 0; i < universeHeight; i++) {
-        var universeRow = document.createElement('tr');
-        for (var j = 0; j < universeWidth; j++) {
-            var universeCell= document.createElement('td');
+    for (let i = 0; i < universeHeight; i++) {
+        let universeRow = document.createElement('tr');
+        for (let j = 0; j < universeWidth; j++) {
+            let universeCell= document.createElement('td');
             universeCell.classList.add('cell');
             universeRow.appendChild(universeCell);
         }
@@ -39,7 +40,7 @@ function createUniverse(universeWidth = 30, universeHeight = 30) {
  * Generating random population layout. 
  */
 function createRandomPopulationLayout() {
-    for (var i = 0; i < universeSize; i++) {
+    for (let i = 0; i < universeSize; i++) {
         population.layout[i] = getRandomNumberBetweenZeroAndN(2); // 0 or 1
     }
 }
@@ -49,7 +50,7 @@ function createRandomPopulationLayout() {
  */
 function populateUniverse() {
     createRandomPopulationLayout();
-    for (var i = 0; i < population.layout.length; i++) {
+    for (let i = 0; i < population.layout.length; i++) {
         if (population.layout[i] == 1) {
             document.getElementsByTagName("td")[i].classList.add('alive');
         }
@@ -61,9 +62,11 @@ function populateUniverse() {
  * @param {int} numOfCells - number of alive cells to create 
  */
 function createRandomLife(numOfCells = 10) {
-    if (numOfCells > universeSize) return false; // no infinite loop
+    if (numOfCells > universeSize) {
+        return false; // no infinite loop
+    }
     else {
-        for (var i = 0; i < numOfCells; i++) {
+        for (let i = 0; i < numOfCells; i++) {
             randNum = getRandomNumberBetweenZeroAndN(universeSize);
             while (document.getElementsByTagName("td")[randNum].classList.contains('alive')) {
                 randNum = getRandomNumberBetweenZeroAndN(universeSize);
@@ -82,12 +85,18 @@ function getRandomNumberBetweenZeroAndN(max = 2) {
 }
 
 function addTimeController() {
-    var timeControllerDiv = document.createElement('div');
+    let timeControllerDiv = document.createElement('div');
     timeControllerDiv.id = 'timeControllerDiv';
-    var nextGenButton = document.createElement('input');
+    let nextGenButton = document.createElement('input');
     nextGenButton.type = 'button';
     nextGenButton.id = 'nextGenButton';
     nextGenButton.value = 'nextGen()';
     timeControllerDiv.appendChild(nextGenButton);
     document.body.appendChild(timeControllerDiv);
+}
+
+function createNextGeneration() {
+    for (let i = 0; i < universeSize; i++) {
+        let currentCellStatus = population.layout[i]; 
+    }
 }
