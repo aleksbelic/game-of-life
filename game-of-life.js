@@ -1,11 +1,11 @@
-const UNIVERSE_WIDTH = 3;
-const UNIVERSE_HEIGHT = 3;
+const UNIVERSE_WIDTH = 20;
+const UNIVERSE_HEIGHT = 20;
 var universeSize = UNIVERSE_WIDTH * UNIVERSE_HEIGHT;
 
 var population = {
     alive: [],
     dead: [],
-    layout: [1,1,1,0,1,0,0,0,1],
+    layout: [],
 }
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -34,23 +34,23 @@ function createUniverse(universeWidth = 30, universeHeight = 30) {
     document.body.appendChild(universe)
 }
 
+/**
+ * Generating random population layout. 
+ */
+function createRandomPopulationLayout() {
+    for (var i = 0; i < universeSize; i++) {
+        population.layout[i] = getRandomNumberBetweenZeroAndN(2); // 0 or 1
+    }
+}
+
 /** 
  * Adding population to the grid. 
  */
 function populateUniverse() {
-    if (population.layout.length > universeSize) {
-        throw "Univers is overpopulated! Exiting simpulation.";
-    }
-    else {
-        for (var i = 0; i < population.layout.length; i++) {
-            if (population.layout[i] == 1) {
-                document.getElementsByTagName("td")[i].classList.add('alive');
-            }
-            /*
-            else {
-                document.getElementsByTagName("td")[i].classList.remove('alive');
-            }
-            */
+    createRandomPopulationLayout();
+    for (var i = 0; i < population.layout.length; i++) {
+        if (population.layout[i] == 1) {
+            document.getElementsByTagName("td")[i].classList.add('alive');
         }
     }
 }
@@ -76,6 +76,6 @@ function createRandomLife(numOfCells = 10) {
  * Returns random number between 0 and a positive number (0 included, max excluded).
  * @param {int} max - positive number
  */
-function getRandomNumberBetweenZeroAndN(max = 10) {
+function getRandomNumberBetweenZeroAndN(max = 2) {
     return Math.floor(Math.random() * max);
 }
