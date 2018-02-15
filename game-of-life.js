@@ -1,5 +1,5 @@
-const UNIVERSE_WIDTH = 20;
-const UNIVERSE_HEIGHT = 20;
+const UNIVERSE_WIDTH = 3;
+const UNIVERSE_HEIGHT = 3;
 var universeSize = UNIVERSE_WIDTH * UNIVERSE_HEIGHT;
 
 var population = {
@@ -8,10 +8,11 @@ var population = {
     layout: [],
 }
 
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function() {
     createUniverse(UNIVERSE_WIDTH, UNIVERSE_HEIGHT);
     //createRandomLife(5);
     populateUniverse();
+    addTimeController();
 }, false);
 
 /**
@@ -21,12 +22,12 @@ document.addEventListener('DOMContentLoaded', function(){
  */
 function createUniverse(universeWidth = 30, universeHeight = 30) {
     var universe = document.createElement('table');
-    universe.setAttribute('id', 'universe');
+    universe.id = 'universe';
     for (var i = 0; i < universeHeight; i++) {
         var universeRow = document.createElement('tr');
         for (var j = 0; j < universeWidth; j++) {
             var universeCell= document.createElement('td');
-            universeCell.setAttribute('class', 'cell');
+            universeCell.classList.add('cell');
             universeRow.appendChild(universeCell);
         }
         universe.appendChild(universeRow);
@@ -78,4 +79,15 @@ function createRandomLife(numOfCells = 10) {
  */
 function getRandomNumberBetweenZeroAndN(max = 2) {
     return Math.floor(Math.random() * max);
+}
+
+function addTimeController() {
+    var timeControllerDiv = document.createElement('div');
+    timeControllerDiv.id = 'timeControllerDiv';
+    var nextGenButton = document.createElement('input');
+    nextGenButton.type = 'button';
+    nextGenButton.id = 'nextGenButton';
+    nextGenButton.value = 'nextGen()';
+    timeControllerDiv.appendChild(nextGenButton);
+    document.body.appendChild(timeControllerDiv);
 }
