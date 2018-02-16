@@ -3,16 +3,15 @@ const UNIVERSE_HEIGHT = 20;
 var universeSize = UNIVERSE_WIDTH * UNIVERSE_HEIGHT;
 
 var population = {
+    generation: 0,
     neighbourhood: [], // living neighbours layout
     layout: [],
 }
-var genCounter = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
     createUniverse(UNIVERSE_WIDTH, UNIVERSE_HEIGHT);
     createRandomPopulationLayout();
     populateUniverse();
-    console.log(population.layout);
     addTimeController();
     getLivingCount();
 
@@ -53,6 +52,7 @@ function createRandomPopulationLayout() {
             population.layout[i].push(getRandomNumberBetweenZeroAndN(2)); // 0 or 1 == dead or alive
         }
     }
+    population.generation++;
 }
 
 /** 
@@ -90,7 +90,7 @@ function addTimeController() {
 
     let genCounterSpan = document.createElement('span');
     genCounterSpan.id = 'genCounterSpan';
-    genCounterSpan.innerHTML = genCounter;
+    genCounterSpan.innerHTML = population.generation;
 
     let livingCounterSpan = document.createElement('span');
     livingCounterSpan.id = 'livingCounterSpan';
@@ -110,8 +110,6 @@ function addTimeController() {
  */
  function createNextGeneration() {
     checkLivingConditions();
-
-    console.log(population.neighbourhood);
     
     for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
         for (let j = 0; j < UNIVERSE_WIDTH; j++) {
@@ -125,8 +123,8 @@ function addTimeController() {
     }
 
     populateUniverse();
-    genCounter++;
-    document.getElementById('genCounterSpan').innerHTML = genCounter;
+    population.generation++;
+    document.getElementById('genCounterSpan').innerHTML = population.generation;
     document.getElementById('livingCounterSpan').innerHTML = getLivingCount();
 }
 
