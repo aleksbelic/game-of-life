@@ -4,9 +4,9 @@
 }
 #universe,
 #universe td {
-    border: 1px solid black;;
+    border: 1px solid #eee;;
     border-collapse: collapse;
 }
 #universe td.cell.alive {
-    background-color: yellow;
+    background-color: GreenYellow ;
 }

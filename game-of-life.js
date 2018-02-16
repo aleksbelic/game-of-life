@@ -1,10 +1,9 @@
-const UNIVERSE_WIDTH = 10;
-const UNIVERSE_HEIGHT = 10;
+const UNIVERSE_WIDTH = 20;
+const UNIVERSE_HEIGHT = 20;
 var universeSize = UNIVERSE_WIDTH * UNIVERSE_HEIGHT;
 
 var population = {
-    neighbourhood: [],
-    alive: 0,
+    neighbourhood: [], // living neighbours layout
     layout: [],
 }
 var genCounter = 1;
@@ -15,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     populateUniverse();
     console.log(population.layout);
     addTimeController();
+    getLivingCount();
 
     nextGenButton.onclick = function(){
         createNextGeneration();
@@ -92,8 +92,13 @@ function addTimeController() {
     genCounterSpan.id = 'genCounterSpan';
     genCounterSpan.innerHTML = genCounter;
 
-    timeControllerDiv.appendChild(nextGenButton);
+    let livingCounterSpan = document.createElement('span');
+    livingCounterSpan.id = 'livingCounterSpan';
+    livingCounterSpan.innerHTML = getLivingCount();
+
     timeControllerDiv.appendChild(genCounterSpan);
+    timeControllerDiv.appendChild(nextGenButton);
+    timeControllerDiv.appendChild(livingCounterSpan);
     document.body.appendChild(timeControllerDiv);
 }
 /**
@@ -122,6 +127,7 @@ function addTimeController() {
     populateUniverse();
     genCounter++;
     document.getElementById('genCounterSpan').innerHTML = genCounter;
+    document.getElementById('livingCounterSpan').innerHTML = getLivingCount();
 }
 
 /** 
@@ -171,4 +177,19 @@ function checkLivingConditions() {
             
         }
     }
+}
+
+/**
+ * 
+ */
+function getLivingCount() {
+    livingCount = 0;
+    for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
+        for (let j = 0; j < UNIVERSE_WIDTH; j++) {
+            if (population.layout[i][j] == 1) {
+                livingCount++;
+            }
+        }
+    }
+    return livingCount;
 }
