@@ -1,18 +1,20 @@
-const UNIVERSE_WIDTH = 3;
-const UNIVERSE_HEIGHT = 3;
+const UNIVERSE_WIDTH = 10;
+const UNIVERSE_HEIGHT = 10;
 var universeSize = UNIVERSE_WIDTH * UNIVERSE_HEIGHT;
 
 var population = {
-    alive: [],
-    dead: [],
+    neighbourhood: [],
+    alive: 0,
     layout: [],
 }
+var genCounter = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
     createUniverse(UNIVERSE_WIDTH, UNIVERSE_HEIGHT);
-    addTimeController();
+    createRandomPopulationLayout();
     populateUniverse();
     console.log(population.layout);
+    addTimeController();
 
     nextGenButton.onclick = function(){
         createNextGeneration();
@@ -45,22 +47,25 @@ function createUniverse(universeWidth = 30, universeHeight = 30) {
  */
 function createRandomPopulationLayout() {
     for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
+        population.neighbourhood.push([]);
         population.layout.push([]);
         for (let j = 0; j < UNIVERSE_WIDTH; j++) {
-            population.layout[i].push(getRandomNumberBetweenZeroAndN(2)); // 0 or 1
+            population.layout[i].push(getRandomNumberBetweenZeroAndN(2)); // 0 or 1 == dead or alive
         }
     }
 }
 
 /** 
- * Adding population to the grid. 
+ * Adding population to the grid according to its layout. 
  */
 function populateUniverse() {
-    createRandomPopulationLayout();
     for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
         for (let j = 0; j < UNIVERSE_WIDTH; j++) {
             if (population.layout[i][j] == 1) {
                 document.getElementsByTagName("tr")[i].getElementsByTagName("td")[j].classList.add('alive');
+            }
+            else if (population.layout[i][j] == 0) {
+                document.getElementsByTagName("tr")[i].getElementsByTagName("td")[j].classList.remove('alive');
             }
         }
     }
@@ -77,23 +82,92 @@ function getRandomNumberBetweenZeroAndN(max = 2) {
 function addTimeController() {
     let timeControllerDiv = document.createElement('div');
     timeControllerDiv.id = 'timeControllerDiv';
+
     let nextGenButton = document.createElement('input');
     nextGenButton.type = 'button';
     nextGenButton.id = 'nextGenButton';
     nextGenButton.value = 'nextGen()';
+
+    let genCounterSpan = document.createElement('span');
+    genCounterSpan.id = 'genCounterSpan';
+    genCounterSpan.innerHTML = genCounter;
+
     timeControllerDiv.appendChild(nextGenButton);
+    timeControllerDiv.appendChild(genCounterSpan);
     document.body.appendChild(timeControllerDiv);
 }
+/**
+ * Who lives and who dies?
+ * - Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
+ * - Any live cell with two or three live neighbours lives on to the next generation.
+ * - Any live cell with more than three live neighbours dies, as if by overpopulation.
+ * - Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+ */
+ function createNextGeneration() {
+    checkLivingConditions();
 
-function createNextGeneration() {
-    let neighbourCount = 0; // num of living cells surrounding the current cell
+    console.log(population.neighbourhood);
+    
     for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
         for (let j = 0; j < UNIVERSE_WIDTH; j++) {
-            try {
-                console.log(i - 1 + ', ' + j + ' : ' + population.layout[i - 1][j]);
-            } catch(e) {
-                console.log(i);
+            if (population.neighbourhood[i][j] < 2 || population.neighbourhood[i][j] > 3) { // lonely or too crowded
+                population.layout[i][j] = 0;
             }
+            else if (population.neighbourhood[i][j] == 3) {
+                population.layout[i][j] = 1;
+            }
+        }
+    }
+
+    populateUniverse();
+    genCounter++;
+    document.getElementById('genCounterSpan').innerHTML = genCounter;
+}
+
+/** 
+ * Checking which cells should live/die:
+ */
+function checkLivingConditions() {
+    let neighbourCount; // num of living cells surrounding the current cell
+    for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
+        for (let j = 0; j < UNIVERSE_WIDTH; j++) {
+            neighbourCount = 0;
+
+            // check for neighbours in the prev row 
+            if (typeof population.layout[i-1] !== 'undefined') { 
+                if (typeof population.layout[i-1][j-1] !== 'undefined' && population.layout[i-1][j-1] == 1) {
+                    neighbourCount++;
+                }
+                if (population.layout[i-1][j] == 1) {
+                    neighbourCount++;
+                }
+                if (typeof population.layout[i-1][j+1] !== 'undefined' && population.layout[i-1][j+1] == 1) {
+                    neighbourCount++;
+                }
+            }
+
+            // check for neighbours in current row 
+            if (typeof population.layout[i][j-1] !== 'undefined' && population.layout[i][j-1] == 1) {
+                neighbourCount++;
+            }
+            if (typeof population.layout[i][j+1] !== 'undefined' && population.layout[i][j+1] == 1) {
+                neighbourCount++;
+            }
+
+            // check for neighbours in the next row 
+            if (typeof population.layout[i+1] !== 'undefined') { 
+                if (typeof population.layout[i+1][j-1] !== 'undefined' && population.layout[i+1][j-1] == 1) {
+                    neighbourCount++;
+                }
+                if (population.layout[i+1][j] == 1) {
+                    neighbourCount++;
+                }
+                if (typeof population.layout[i+1][j+1] !== 'undefined' && population.layout[i+1][j+1] == 1) {
+                    neighbourCount++;
+                }
+            }
+
+            population.neighbourhood[i][j] = neighbourCount;
             
         }
     }
