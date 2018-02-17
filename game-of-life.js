@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
     createUniverse(UNIVERSE_WIDTH, UNIVERSE_HEIGHT);
     createRandomPopulationLayout();
     populateUniverse();
-    addTimeController();
-    getLivingCount();
+    addControls();
+    getLivingCellsCount();
 
     nextGenButton.onclick = function(){
         createNextGeneration();
@@ -79,30 +79,43 @@ function getRandomNumberBetweenZeroAndN(max = 2) {
     return Math.floor(Math.random() * max);
 }
 
-function addTimeController() {
-    let timeControllerDiv = document.createElement('div');
-    timeControllerDiv.id = 'timeControllerDiv';
+function addControls() {
+    let controlsDiv = document.createElement('div');
+    controlsDiv.id = 'controlsDiv';
 
-    let nextGenButton = document.createElement('input');
-    nextGenButton.type = 'button';
-    nextGenButton.id = 'nextGenButton';
-    nextGenButton.value = 'nextGen()';
-
+    let genDiv = document.createElement('div');
+    let genLabel = document.createElement('label');
+    genLabel.innerHTML = 'Generation: ';
     let genCounterSpan = document.createElement('span');
     genCounterSpan.id = 'genCounterSpan';
     genCounterSpan.innerHTML = population.generation;
+    genDiv.appendChild(genLabel);
+    genDiv.appendChild(genCounterSpan);
 
-    let livingCounterSpan = document.createElement('span');
-    livingCounterSpan.id = 'livingCounterSpan';
-    livingCounterSpan.innerHTML = getLivingCount();
+    let statsDiv = document.createElement('div');
+    let statsLabel = document.createElement('label');
+    statsLabel.innerHTML = 'Living cells: ';
+    let livingCellsCounterSpan = document.createElement('span');
+    livingCellsCounterSpan.id = 'livingCellsCounterSpan';
+    livingCellsCounterSpan.innerHTML = getLivingCellsCount() + ' (' +  + (getLivingCellsCount() * 100 / universeSize) + '%)';
+    statsDiv.appendChild(statsLabel);
+    statsDiv.appendChild(livingCellsCounterSpan);
 
-    timeControllerDiv.appendChild(genCounterSpan);
-    timeControllerDiv.appendChild(nextGenButton);
-    timeControllerDiv.appendChild(livingCounterSpan);
-    document.body.appendChild(timeControllerDiv);
+    let buttonDiv = document.createElement('div');
+    let nextGenButton = document.createElement('input');
+    nextGenButton.type = 'button';
+    nextGenButton.id = 'nextGenButton';
+    nextGenButton.value = 'Next Generation';
+    buttonDiv.appendChild(nextGenButton);
+
+    controlsDiv.appendChild(genDiv);
+    controlsDiv.appendChild(statsDiv);
+    controlsDiv.appendChild(buttonDiv);
+
+    document.body.appendChild(controlsDiv);
 }
 /**
- * Who lives and who dies?
+ * Decision Point, who lives and who dies:
  * - Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
  * - Any live cell with two or three live neighbours lives on to the next generation.
  * - Any live cell with more than three live neighbours dies, as if by overpopulation.
@@ -125,7 +138,7 @@ function addTimeController() {
     populateUniverse();
     population.generation++;
     document.getElementById('genCounterSpan').innerHTML = population.generation;
-    document.getElementById('livingCounterSpan').innerHTML = getLivingCount();
+    document.getElementById('livingCellsCounterSpan').innerHTML = getLivingCellsCount() + ' (' +  + (getLivingCellsCount() * 100 / universeSize) + '%)';
 }
 
 /** 
@@ -178,9 +191,9 @@ function checkLivingConditions() {
 }
 
 /**
- * 
+ * Returns the number of living cells.
  */
-function getLivingCount() {
+function getLivingCellsCount() {
     livingCount = 0;
     for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
         for (let j = 0; j < UNIVERSE_WIDTH; j++) {

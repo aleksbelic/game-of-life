@@ -10,3 +10,7 @@
 #universe td.cell.alive {
     background-color: GreenYellow ;
 }
+#genCounterSpan,
+#livingCellsCounterSpan {
+    font-weight: bold;
+}
