@@ -1,54 +1,71 @@
 const UNIVERSE_WIDTH = 20;
 const UNIVERSE_HEIGHT = 20;
-var universeSize = UNIVERSE_WIDTH * UNIVERSE_HEIGHT;
+const AUTOPLAY_INTERVAL = 100; // ms
 
-var population = {
+let population = {
     generation: 0,
     neighbourhood: [], // living neighbours layout
     layout: [],
 }
+let universe;
+let autoplayIntervalObj;
 
 document.addEventListener('DOMContentLoaded', function() {
     createUniverse(UNIVERSE_WIDTH, UNIVERSE_HEIGHT);
     createRandomPopulationLayout();
     populateUniverse();
     addControls();
-    getLivingCellsCount();
 
-    nextGenButton.onclick = function(){
+    nextGenButton.onclick = function() {
         createNextGeneration();
+    };
+
+    autoplayButton.onclick = function() {
+        if (!autoplayIntervalObj) { // autoplay is not running
+            document.getElementById('autoplayButton').value = 'Stop';
+            // setting interval for autoplay
+            autoplayIntervalObj = setInterval(function() {
+                createNextGeneration();
+            }, AUTOPLAY_INTERVAL);
+        } else {
+            clearInterval(autoplayIntervalObj);
+            autoplayIntervalObj = null;
+            document.getElementById('autoplayButton').value = 'Go';
+        }
     };
 
 }, false);
 
 /**
- * Drawing the grid with specified width and height.
+ * Drawing the universe grid with specified width and height.
  * @param {int} universeWidth - number of cells in a row
  * @param {int} universeHeight - number of cells in a column
  */
-function createUniverse(universeWidth = 30, universeHeight = 30) {
-    let universe = document.createElement('table');
+function createUniverse(universeWidth = UNIVERSE_WIDTH, universeHeight = UNIVERSE_HEIGHT) {
+    universe = document.createElement('table');
     universe.id = 'universe';
-    for (let i = 0; i < universeHeight; i++) {
+    universe.width = universeWidth;
+    universe.height = universeHeight;
+    for (let i = 0; i < universe.height; i++) {
         let universeRow = document.createElement('tr');
-        for (let j = 0; j < universeWidth; j++) {
+        for (let j = 0; j < universe.width; j++) {
             let universeCell= document.createElement('td');
             universeCell.classList.add('cell');
             universeRow.appendChild(universeCell);
         }
         universe.appendChild(universeRow);
     }
-    document.body.appendChild(universe)
+    document.body.appendChild(universe);
 }
 
 /**
  * Generating random population layout. 
  */
 function createRandomPopulationLayout() {
-    for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
+    for (let i = 0; i < universe.height; i++) {
         population.neighbourhood.push([]);
         population.layout.push([]);
-        for (let j = 0; j < UNIVERSE_WIDTH; j++) {
+        for (let j = 0; j < universe.width; j++) {
             population.layout[i].push(getRandomNumberBetweenZeroAndN(2)); // 0 or 1 == dead or alive
         }
     }
@@ -59,12 +76,12 @@ function createRandomPopulationLayout() {
  * Adding population to the grid according to its layout. 
  */
 function populateUniverse() {
-    for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
-        for (let j = 0; j < UNIVERSE_WIDTH; j++) {
+    for (let i = 0; i < universe.height; i++) {
+        for (let j = 0; j < universe.width; j++) {
             if (population.layout[i][j] == 1) {
                 document.getElementsByTagName("tr")[i].getElementsByTagName("td")[j].classList.add('alive');
             }
-            else if (population.layout[i][j] == 0) {
+            else {
                 document.getElementsByTagName("tr")[i].getElementsByTagName("td")[j].classList.remove('alive');
             }
         }
@@ -97,23 +114,29 @@ function addControls() {
     statsLabel.innerHTML = 'Living cells: ';
     let livingCellsCounterSpan = document.createElement('span');
     livingCellsCounterSpan.id = 'livingCellsCounterSpan';
-    livingCellsCounterSpan.innerHTML = getLivingCellsCount() + ' (' +  + (getLivingCellsCount() * 100 / universeSize) + '%)';
+    livingCellsCounterSpan.innerHTML = getLivingCellsCount() + ' (' + (getLivingCellsCount() * 100 / (universe.width * universe.height)) + ' %)';
     statsDiv.appendChild(statsLabel);
     statsDiv.appendChild(livingCellsCounterSpan);
 
-    let buttonDiv = document.createElement('div');
+    let timeControlDiv = document.createElement('div');
     let nextGenButton = document.createElement('input');
     nextGenButton.type = 'button';
     nextGenButton.id = 'nextGenButton';
     nextGenButton.value = 'Next Generation';
-    buttonDiv.appendChild(nextGenButton);
+    let autoplayButton = document.createElement('input');
+    autoplayButton.type = 'button';
+    autoplayButton.id = 'autoplayButton';
+    autoplayButton.value = 'Go';
+    timeControlDiv.appendChild(nextGenButton);
+    timeControlDiv.appendChild(autoplayButton);
 
     controlsDiv.appendChild(genDiv);
     controlsDiv.appendChild(statsDiv);
-    controlsDiv.appendChild(buttonDiv);
+    controlsDiv.appendChild(timeControlDiv);
 
     document.body.appendChild(controlsDiv);
 }
+
 /**
  * Decision Point, who lives and who dies:
  * - Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
@@ -124,13 +147,13 @@ function addControls() {
  function createNextGeneration() {
     checkLivingConditions();
     
-    for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
-        for (let j = 0; j < UNIVERSE_WIDTH; j++) {
+    for (let i = 0; i < universe.height; i++) {
+        for (let j = 0; j < universe.width; j++) {
             if (population.neighbourhood[i][j] < 2 || population.neighbourhood[i][j] > 3) { // lonely or too crowded
                 population.layout[i][j] = 0;
             }
             else if (population.neighbourhood[i][j] == 3) {
-                population.layout[i][j] = 1;
+                population.layout[i][j] = 1; // IT'S ALIVE!!! ^.^
             }
         }
     }
@@ -138,16 +161,16 @@ function addControls() {
     populateUniverse();
     population.generation++;
     document.getElementById('genCounterSpan').innerHTML = population.generation;
-    document.getElementById('livingCellsCounterSpan').innerHTML = getLivingCellsCount() + ' (' +  + (getLivingCellsCount() * 100 / universeSize) + '%)';
+    document.getElementById('livingCellsCounterSpan').innerHTML = getLivingCellsCount() + ' (' + (getLivingCellsCount() * 100 / (universe.width * universe.height)) + ' %)';
 }
 
 /** 
- * Checking which cells should live/die:
+ * Checking cell surroundings by counting its living neighbours.
  */
 function checkLivingConditions() {
     let neighbourCount; // num of living cells surrounding the current cell
-    for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
-        for (let j = 0; j < UNIVERSE_WIDTH; j++) {
+    for (let i = 0; i < universe.height; i++) {
+        for (let j = 0; j < universe.width; j++) {
             neighbourCount = 0;
 
             // check for neighbours in the prev row 
@@ -185,7 +208,6 @@ function checkLivingConditions() {
             }
 
             population.neighbourhood[i][j] = neighbourCount;
-            
         }
     }
 }
@@ -194,13 +216,13 @@ function checkLivingConditions() {
  * Returns the number of living cells.
  */
 function getLivingCellsCount() {
-    livingCount = 0;
-    for (let i = 0; i < UNIVERSE_HEIGHT; i++) {
-        for (let j = 0; j < UNIVERSE_WIDTH; j++) {
+    let livingCellsCount = 0;
+    for (let i = 0; i < universe.height; i++) {
+        for (let j = 0; j < universe.width; j++) {
             if (population.layout[i][j] == 1) {
-                livingCount++;
+                livingCellsCount++;
             }
         }
     }
-    return livingCount;
+    return livingCellsCount;
 }

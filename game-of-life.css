@@ -1,16 +1,24 @@
 #universe {
     width: 500px;
     height: 500px;
+    border: 1px solid #000;
 }
-#universe,
-#universe td {
-    border: 1px solid #eee;;
-    border-collapse: collapse;
+#universe td.cell {
+    border: 1px solid #eee;
 }
 #universe td.cell.alive {
+    border: 1px solid olivedrab;
     background-color: GreenYellow ;
 }
-#genCounterSpan,
-#livingCellsCounterSpan {
+
+#controlsDiv #genCounterSpan,
+#controlsDiv #livingCellsCounterSpan {
     font-weight: bold;
+}
+#controlsDiv #nextGenButton,
+#controlsDiv #autoplayButton {
+    height: 30px;
+}
+#controlsDiv #autoplayButton {
+    width: 45px;
 }
