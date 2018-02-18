@@ -1,5 +1,5 @@
-const UNIVERSE_WIDTH = 20;
-const UNIVERSE_HEIGHT = 20;
+const UNIVERSE_WIDTH = 100;
+const UNIVERSE_HEIGHT = 80;
 const AUTOPLAY_INTERVAL = 100; // ms
 
 let population = {
