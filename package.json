@@ -1,0 +1,24 @@
+{
+  "name": "game-of-life",
+  "version": "2.0.0",
+  "description": "Simple browser implementaion of John Conway's Game of Life",
+  "main": "game-of-life.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aleksbelic/game-of-life.git"
+  },
+  "keywords": [],
+  "author": "Aleksandar Belic - Aleksanchez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aleksbelic/game-of-life/issues"
+  },
+  "homepage": "https://github.com/aleksbelic/game-of-life#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "prettier": "^2.7.1"
+  }
+}
