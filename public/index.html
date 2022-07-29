@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Game of Life 2.0.0 &dash; by Aleksanchez</title>
+	<link rel="stylesheet" href="./game-of-life.css">
+</head>
+
+<body>
+
+	<div id="game-container"></div>
+
+	<script type="module">
+		import { createGrid } from './game-of-life.mjs';
+		createGrid(document.getElementById('game-container'), 20, 20);
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+#golGrid {
+  width: 500px;
+  height: 500px;
+  border: 1px solid #000;
+}
+#golGrid td.cell {
+  border: 1px solid #eee;
+}
+#golGrid td.cell.alive {
+  border: 1px solid olivedrab;
+  background-color: GreenYellow;
+}
+
+#controlsDiv #genCounterSpan,
+#controlsDiv #livingCellsCounterSpan {
+  font-weight: bold;
+}
+#controlsDiv #nextGenButton,
+#controlsDiv #autoplayButton {
+  height: 30px;
+}
+#controlsDiv #autoplayButton {
+  width: 45px;
+}
