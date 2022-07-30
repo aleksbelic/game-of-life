@@ -1,7 +1,15 @@
 # Game of Life
 
 Browser implementaion of John Conway's [Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
+
 ![screenshot](https://user-images.githubusercontent.com/8314231/36358375-d0f04902-150d-11e8-95fe-18bed40e14ed.png)
+
+# Rules
+
+- Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
+- Any live cell with two or three live neighbours lives on to the next generation.
+- Any live cell with more than three live neighbours dies, as if by overpopulation.
+- Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
 # Development
 
