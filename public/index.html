@@ -12,8 +12,9 @@
 	<div id="game-container"></div>
 
 	<script type="module">
-		import { createGrid } from './game-of-life.mjs';
-		createGrid(document.getElementById('game-container'), 20, 20);
+		import { GolGrid } from './game-of-life.mjs';
+		const golGrid = new GolGrid(20, 20);
+		golGrid.append(document.getElementById('game-container'));
 	</script>
 
 </body>

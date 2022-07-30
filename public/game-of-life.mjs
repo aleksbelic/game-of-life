@@ -2,27 +2,49 @@ const GRID_WIDTH = 100; // cells
 const GRID_HEIGHT = 80; // cells
 const AUTOPLAY_INTERVAL = 100; // ms
 
-/**
- * Appends Game of Life grid to specified document element.
- * @param {number} gridWidth - number of cells per row
- * @param {number} gridHeight - number of cells per column
- */
-export function createGrid(
-  gameContainerElem,
-  gridWidth = GRID_WIDTH,
-  gridHeight = GRID_HEIGHT
-) {
-  const golGrid = document.createElement('table');
-  golGrid.setAttribute('id', 'golGrid');
+export class GolGrid {
+  #width;
+  #height;
+  #container;
+  #population = {
+    generation: 0,
+    neighbourhood: [], // living neighbours layout
+    layout: [],
+  };
 
-  for (let i = 0; i < gridHeight; i++) {
-    const gridRow = document.createElement('tr');
-    for (let j = 0; j < gridWidth; j++) {
-      let gridCell = document.createElement('td');
-      gridCell.classList.add('cell');
-      gridRow.appendChild(gridCell);
-    }
-    golGrid.appendChild(gridRow);
+  constructor(gridWidth = GRID_WIDTH, gridHeight = GRID_HEIGHT) {
+    this.#width = gridWidth;
+    this.#height = gridHeight;
   }
-  gameContainerElem.appendChild(golGrid);
+
+  append(container) {
+    this.#container = container;
+
+    const golGridElem = document.createElement('table');
+    golGridElem.setAttribute('id', 'golGrid');
+
+    for (let i = 0; i < this.#height; i++) {
+      let gridRow = document.createElement('tr');
+      for (let j = 0; j < this.#width; j++) {
+        let gridCell = document.createElement('td');
+        gridCell.classList.add('cell');
+        gridRow.appendChild(gridCell);
+      }
+      golGridElem.appendChild(gridRow);
+    }
+    this.#container.appendChild(golGridElem);
+  }
+
+  /*
+  generateRandomPopulationLayout() {
+    for (let i = 0; i < this.#height; i++) {
+      this.#population.neighbourhood.push([]);
+      this.#population.layout.push([]);
+      for (let j = 0; j < this.#width; j++) {
+        this.#population.layout[i].push(getRandomNumberBetweenZeroAndN(2)); // 0 or 1 == dead or alive
+      }
+    }
+    population.generation++;
+  }
+  */
 }
