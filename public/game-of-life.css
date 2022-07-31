@@ -11,14 +11,16 @@
   background-color: GreenYellow;
 }
 
-#controlsDiv #genCounterSpan,
-#controlsDiv #livingCellsCounterSpan {
+#controlsContainer #genCounterSpan,
+#controlsContainer #livingCellsCounterSpan {
   font-weight: bold;
 }
-#controlsDiv #nextGenButton,
-#controlsDiv #autoplayButton {
+#controlsContainer #nextGenButton,
+#controlsContainer #autoplayBtn {
+  min-width: 45px;
   height: 30px;
 }
-#controlsDiv #autoplayButton {
-  width: 45px;
+
+#controlsContainer {
+  display: flex;
 }

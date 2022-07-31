@@ -1,6 +1,6 @@
 const GRID_WIDTH = 100; // cells
 const GRID_HEIGHT = 80; // cells
-const AUTOPLAY_INTERVAL = 100; // ms
+const AUTOPLAY_INTERVAL = 500; // ms
 
 export class Gol {
   #autoplayIntervalObj;
@@ -9,9 +9,10 @@ export class Gol {
   #height;
   #container;
   #population = {
-    generation: 0,
+    genCount: 0,
     neighbourhood: [], // living neighbours layout
     layout: [],
+    nextGenLayout: [],
   };
 
   constructor(gridWidth = GRID_WIDTH, gridHeight = GRID_HEIGHT) {
@@ -50,7 +51,7 @@ export class Gol {
         this.#population.layout[i].push(status);
       }
     }
-    this.#population.generation++;
+    this.#population.genCount++;
   }
 
   #populateGrid() {
@@ -64,15 +65,15 @@ export class Gol {
   }
 
   #appendControls() {
-    let controlsDiv = document.createElement('div');
-    controlsDiv.id = 'controlsDiv';
+    let controlsContainerElem = document.createElement('div');
+    controlsContainerElem.id = 'controlsContainer';
 
     let genDiv = document.createElement('div');
     let genLabel = document.createElement('label');
     genLabel.innerHTML = 'Generation: ';
     let genCounterSpan = document.createElement('span');
     genCounterSpan.id = 'genCounterSpan';
-    genCounterSpan.innerHTML = this.#population.generation;
+    genCounterSpan.innerHTML = this.#population.genCount;
     genDiv.appendChild(genLabel);
     genDiv.appendChild(genCounterSpan);
 
@@ -93,20 +94,22 @@ export class Gol {
 
     let nextGenButton = document.createElement('button');
     nextGenButton.id = 'nextGenButton';
-    nextGenButton.innerHTML = 'Next Generation';
+    nextGenButton.title = 'Next Generation';
+    nextGenButton.innerHTML = '&#9654;'; // play
 
-    let autoplayButton = document.createElement('button');
-    autoplayButton.id = 'autoplayButton';
-    autoplayButton.innerHTML = '&#9654;'; // play
+    let autoplayBtn = document.createElement('button');
+    autoplayBtn.id = 'autoplayBtn';
+    autoplayBtn.title = 'Autoplay';
+    autoplayBtn.innerHTML = '&infin;'; // infinite
 
     timeControlDiv.appendChild(nextGenButton);
-    timeControlDiv.appendChild(autoplayButton);
+    timeControlDiv.appendChild(autoplayBtn);
 
-    controlsDiv.appendChild(genDiv);
-    controlsDiv.appendChild(statsDiv);
-    controlsDiv.appendChild(timeControlDiv);
+    controlsContainerElem.appendChild(genDiv);
+    controlsContainerElem.appendChild(statsDiv);
+    controlsContainerElem.appendChild(timeControlDiv);
 
-    this.#container.appendChild(controlsDiv);
+    this.#container.appendChild(controlsContainerElem);
 
     // add control event listeners
     const self = this;
@@ -114,10 +117,10 @@ export class Gol {
       self.#createNextGeneration();
     };
 
-    document.getElementById('autoplayButton').onclick = function () {
+    document.getElementById('autoplayBtn').onclick = function () {
       if (!self.#autoplayIntervalObj) {
         // autoplay is not running
-        document.getElementById('autoplayButton').innerHTML = '&#9724'; // stop
+        document.getElementById('autoplayBtn').innerHTML = '&#9724;'; // stop
 
         // setting interval for autoplay
         self.#autoplayIntervalObj = setInterval(function () {
@@ -126,7 +129,7 @@ export class Gol {
       } else {
         clearInterval(self.#autoplayIntervalObj);
         self.#autoplayIntervalObj = null;
-        document.getElementById('autoplayButton').innerHTML = '&#9654;'; // play
+        document.getElementById('autoplayBtn').innerHTML = '&infin;'; // infinite
       }
     };
   }
@@ -135,7 +138,7 @@ export class Gol {
     let livingCellsCount = 0;
     for (let i = 0; i < this.#height; i++) {
       for (let j = 0; j < this.#width; j++) {
-        if (this.#population.layout[i][j] == 1) {
+        if (this.#population.layout[i][j] === 1) {
           livingCellsCount++;
         }
       }
@@ -224,13 +227,17 @@ export class Gol {
     }
 
     this.#populateGrid();
-    this.#population.generation++;
+    this.#population.genCount++;
     document.getElementById('genCounterSpan').innerHTML =
-      this.#population.generation;
+      this.#population.genCount;
     document.getElementById('livingCellsCounterSpan').innerHTML =
       this.#getLivingCellsCount() +
       ' (' +
       (this.#getLivingCellsCount() * 100) / (this.#width * this.#height) +
       ' %)';
+  }
+
+  setPopulation(newPopulation) {
+    this.#population = newPopulation;
   }
 }
