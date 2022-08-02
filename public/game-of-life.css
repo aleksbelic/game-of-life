@@ -1,26 +1,26 @@
 #gol {
   width: 500px;
   height: 500px;
-  border: 1px solid #000;
+  background-color: #ededed;
 }
 #gol td.cell {
-  border: 1px solid #eee;
+  border: 2px solid #d8d7d7;
 }
 #gol td.cell.alive {
-  border: 1px solid olivedrab;
-  background-color: GreenYellow;
+  border-color: #0b6c0b;
+  background-color: #5bbe5b;
 }
 
-#controlsContainer #genCounterSpan,
-#controlsContainer #livingCellsCounterSpan {
+#dataAndControlsContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+}
+#dataContainer #genCount,
+#dataContainer #livingCellsCount {
   font-weight: bold;
 }
-#controlsContainer #nextGenButton,
-#controlsContainer #autoplayBtn {
-  min-width: 45px;
-  height: 30px;
-}
-
-#controlsContainer {
-  display: flex;
+#timeControlContainer button {
+  cursor: pointer;
+  min-width: 50px;
 }

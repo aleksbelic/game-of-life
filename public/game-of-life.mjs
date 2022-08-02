@@ -1,9 +1,9 @@
 const GRID_WIDTH = 100; // cells
 const GRID_HEIGHT = 80; // cells
-const AUTOPLAY_INTERVAL = 500; // ms
+const AUTOPLAY_INTERVAL = 300; // ms
 
 export class Gol {
-  #autoplayIntervalObj;
+  #autoplayIntervalObj = null;
   #elem;
   #width;
   #height;
@@ -65,71 +65,74 @@ export class Gol {
   }
 
   #appendControls() {
-    let controlsContainerElem = document.createElement('div');
-    controlsContainerElem.id = 'controlsContainer';
+    let dataAndControlsContainerElem = document.createElement('div');
+    dataAndControlsContainerElem.id = 'dataAndControlsContainer';
 
-    let genDiv = document.createElement('div');
-    let genLabel = document.createElement('label');
-    genLabel.innerHTML = 'Generation: ';
-    let genCounterSpan = document.createElement('span');
-    genCounterSpan.id = 'genCounterSpan';
-    genCounterSpan.innerHTML = this.#population.genCount;
-    genDiv.appendChild(genLabel);
-    genDiv.appendChild(genCounterSpan);
+    let dataContainerElem = document.createElement('div');
+    dataContainerElem.id = 'dataContainer';
 
-    let statsDiv = document.createElement('div');
+    let genDataContainerElem = document.createElement('div');
+
+    let genLabelElem = document.createElement('label');
+    genLabelElem.innerHTML = 'Generation:&nbsp;';
+
+    let genCountElem = document.createElement('span');
+    genCountElem.id = 'genCount';
+    genCountElem.innerHTML = this.#population.genCount;
+
+    genDataContainerElem.appendChild(genLabelElem);
+    genDataContainerElem.appendChild(genCountElem);
+
+    dataContainerElem.appendChild(genDataContainerElem);
+
+    let statsContainerElem = document.createElement('div');
     let statsLabel = document.createElement('label');
-    statsLabel.innerHTML = 'Living cells: ';
-    let livingCellsCounterSpan = document.createElement('span');
-    livingCellsCounterSpan.id = 'livingCellsCounterSpan';
-    livingCellsCounterSpan.innerHTML =
-      this.#getLivingCellsCount() +
-      ' (' +
-      (this.#getLivingCellsCount() * 100) / (this.#width * this.#height) +
-      ' %)';
-    statsDiv.appendChild(statsLabel);
-    statsDiv.appendChild(livingCellsCounterSpan);
+    statsLabel.innerHTML = 'Living cells:&nbsp;';
 
-    let timeControlDiv = document.createElement('div');
+    let livingCellsCountElem = document.createElement('span');
+    livingCellsCountElem.id = 'livingCellsCount';
+    livingCellsCountElem.innerHTML = this.#getLivingCellsCount();
 
-    let nextGenButton = document.createElement('button');
-    nextGenButton.id = 'nextGenButton';
-    nextGenButton.title = 'Next Generation';
-    nextGenButton.innerHTML = '&#9654;'; // play
+    statsContainerElem.appendChild(statsLabel);
+    statsContainerElem.appendChild(livingCellsCountElem);
+
+    let timeControlContainerElem = document.createElement('div');
+    timeControlContainerElem.id = 'timeControlContainer';
+
+    let nextGenBtn = document.createElement('button');
+    nextGenBtn.id = 'nextGenBtn';
+    nextGenBtn.title = 'Next Generation';
+    nextGenBtn.innerHTML = '&#9654;'; // play
 
     let autoplayBtn = document.createElement('button');
     autoplayBtn.id = 'autoplayBtn';
     autoplayBtn.title = 'Autoplay';
-    autoplayBtn.innerHTML = '&infin;'; // infinite
+    autoplayBtn.innerHTML = '&#9654;&#9654;'; // fast-forward
 
-    timeControlDiv.appendChild(nextGenButton);
-    timeControlDiv.appendChild(autoplayBtn);
+    timeControlContainerElem.appendChild(nextGenBtn);
+    timeControlContainerElem.appendChild(autoplayBtn);
 
-    controlsContainerElem.appendChild(genDiv);
-    controlsContainerElem.appendChild(statsDiv);
-    controlsContainerElem.appendChild(timeControlDiv);
+    dataContainerElem.appendChild(statsContainerElem);
 
-    this.#container.appendChild(controlsContainerElem);
+    dataAndControlsContainerElem.appendChild(dataContainerElem);
+    dataAndControlsContainerElem.appendChild(timeControlContainerElem);
+
+    this.#container.appendChild(dataAndControlsContainerElem);
 
     // add control event listeners
     const self = this;
-    document.getElementById('nextGenButton').onclick = function () {
+    document.getElementById('nextGenBtn').onclick = function () {
       self.#createNextGeneration();
     };
 
     document.getElementById('autoplayBtn').onclick = function () {
-      if (!self.#autoplayIntervalObj) {
-        // autoplay is not running
+      if (self.#autoplayIntervalObj === null) {
         document.getElementById('autoplayBtn').innerHTML = '&#9724;'; // stop
-
-        // setting interval for autoplay
-        self.#autoplayIntervalObj = setInterval(function () {
-          self.#createNextGeneration();
-        }, AUTOPLAY_INTERVAL);
+        self.#setAutoplayInterval();
       } else {
         clearInterval(self.#autoplayIntervalObj);
         self.#autoplayIntervalObj = null;
-        document.getElementById('autoplayBtn').innerHTML = '&infin;'; // infinite
+        document.getElementById('autoplayBtn').innerHTML = '&#9654;&#9654;'; // fast-forward
       }
     };
   }
@@ -228,16 +231,18 @@ export class Gol {
 
     this.#populateGrid();
     this.#population.genCount++;
-    document.getElementById('genCounterSpan').innerHTML =
-      this.#population.genCount;
-    document.getElementById('livingCellsCounterSpan').innerHTML =
-      this.#getLivingCellsCount() +
-      ' (' +
-      (this.#getLivingCellsCount() * 100) / (this.#width * this.#height) +
-      ' %)';
+    document.getElementById('genCount').innerHTML = this.#population.genCount;
+    document.getElementById('livingCellsCount').innerHTML =
+      this.#getLivingCellsCount();
   }
 
   setPopulation(newPopulation) {
     this.#population = newPopulation;
+  }
+
+  #setAutoplayInterval() {
+    this.#autoplayIntervalObj = setInterval(() => {
+      this.#createNextGeneration();
+    }, AUTOPLAY_INTERVAL);
   }
 }
