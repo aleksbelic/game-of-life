@@ -1,28 +1,27 @@
 # Game of Life
 
-Browser implementaion of John Conway's [Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
+React implementaion of John Conway's [Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 
-![screenshot](https://user-images.githubusercontent.com/8314231/36358375-d0f04902-150d-11e8-95fe-18bed40e14ed.png)
+## DEV
 
-# Rules
-
-- Any live cell with fewer than 2 live neighbours dies, as if caused by underpopulation.
-- Any live cell with 2 or 3 live neighbours lives on to the next generation.
-- Any live cell with more than 3 live neighbours dies, as if by overpopulation.
-- Any dead cell with exactly 3 live neighbours becomes a live cell, as if by reproduction.
-
-# Development
-
-Install dependencies:
+Run app in development mode (http://localhost:3000):
 
 ```
-$ npm install
+$ npm start
 ```
 
-Run DEV Server:
+Launch test runner in the interactive watch mode:
 
 ```
-$ npx http-server --cors --port 8889
+$ npm test
 ```
 
-Test your local changes at `http://localhost:8889`.
+Build app for production to the `build` folder.
+
+```
+$ npm run build
+```
+
+It correctly bundles React in production mode and optimizes the build for the best performance. The build is minified and the filenames include the hashes.
+
+Your app is ready to be deployed!
