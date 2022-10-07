@@ -1,5 +1,5 @@
-const GRID_WIDTH = 100; // cells
-const GRID_HEIGHT = 80; // cells
+const GRID_WIDTH = 20; // cells
+const GRID_HEIGHT = 20; // cells
 const AUTOPLAY_INTERVAL = 300; // ms
 
 export class Gol {

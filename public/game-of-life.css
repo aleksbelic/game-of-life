@@ -5,6 +5,7 @@
 }
 #gol td.cell {
   border: 2px solid #d8d7d7;
+  border-radius: 50%;
 }
 #gol td.cell.alive {
   border-color: #0b6c0b;

@@ -1,4 +1,5 @@
 import {Gol} from '../public/game-of-life.mjs';
+import {test, expect} from 'jest';
 
 test('Test next generation', () => {
   let golDummy = new Gol(5, 5);

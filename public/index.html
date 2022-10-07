@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Game of Life 2.0.0 &dash; by Aleksanchez</title>
+    <link rel="stylesheet" href="./game-of-life.css" />
+  </head>
 
-<head>
-	<meta charset="UTF-8" />
-	<title>Game of Life 2.0.0 &dash; by Aleksanchez</title>
-	<link rel="stylesheet" href="./game-of-life.css" />
-</head>
+  <body>
+    <div id="demo-container"></div>
 
-<body>
-	<div id="demo-container"></div>
-
-	<script type="module">
-		import { Gol } from './game-of-life.mjs';
-		const gol = new Gol(20, 20);
-		gol.append(document.getElementById('demo-container'));
-	</script>
-</body>
-
+    <script type="module">
+      import {Gol} from './game-of-life.mjs';
+      const gol = new Gol(20, 20);
+      gol.append(document.getElementById('demo-container'));
+    </script>
+  </body>
 </html>
