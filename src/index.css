@@ -1,5 +1,5 @@
-body {
-  margin: 0;
+#game-of-life {
+  display: flex;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -7,7 +7,31 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+#game-of-life #cells-container {
+  display: table;
+  width: fit-content;
+  height: fit-content;
+  background-color: #ededed;
+  padding: 5px;
+}
+
+#game-of-life .row {
+  display: table-row;
+}
+
+#game-of-life .cell {
+  display: table-cell;
+  width: 23px;
+  height: 23px;
+  border: 2px solid #d8d7d7;
+  border-radius: 50%;
+  cursor: pointer;
+}
+#game-of-life .cell.alive {
+  border-color: #0b6c0b;
+  background-color: #5bbe5b;
+}
+#game-of-life .cell:hover,
+#game-of-life .cell.alive:hover {
+  border-color: #ff0000;
 }
