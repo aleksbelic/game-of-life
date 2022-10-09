@@ -11,23 +11,36 @@ export default class GameOfLife extends React.Component {
     this.state = {
       width: GAME_OF_LIFE_WIDTH,
       height: GAME_OF_LIFE_HEIGHT,
-      cells: [
-        Array(GAME_OF_LIFE_HEIGHT).fill(Array(GAME_OF_LIFE_WIDTH).fill(null)),
-      ],
+      cells: [],
       genCounter: 0,
     };
   }
 
-  generateCells() {}
+  componentDidMount() {
+    this.generateRandomCells();
+  }
+
+  generateRandomCells() {
+    let newGen = Array(this.state.height).fill(
+      Array(this.state.width).fill(false)
+    );
+    newGen = newGen.map(cellRow => {
+      return cellRow.map(cellIsAlive => (Math.random() >= 0.5 ? true : false));
+    });
+    this.setState({cells: newGen});
+  }
 
   render() {
     return (
       <div id="game-of-life">
         <div id="cells-container">
-          {[...Array(this.state.height)].map((v, hi) => (
+          {this.state.cells.map((cellRow, rowIndex) => (
             <div className="row">
-              {[...Array(this.state.width)].map((v, wi) => (
-                <Cell key={`${hi}-${wi}`} />
+              {cellRow.map((cellIsAlive, columnIndex) => (
+                <Cell
+                  key={`c_${rowIndex}_${columnIndex}`}
+                  isAlive={cellIsAlive}
+                />
               ))}
             </div>
           ))}
