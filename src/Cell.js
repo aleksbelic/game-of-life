@@ -1,21 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 
-export default class Cell extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {isAlive: props.isAlive};
-  }
+export default function Cell(props) {
+  const [isAlive, setIsAlive] = useState(props.isAlive);
 
-  cellClicked = () => {
-    this.setState({isAlive: !this.state.isAlive});
-  };
-
-  render() {
-    return (
-      <span
-        className={`cell${this.state.isAlive ? ' alive' : ''}`}
-        onClick={this.cellClicked}
-      ></span>
-    );
-  }
+  return (
+    <span
+      className={`cell${isAlive ? ' alive' : ''}`}
+      onClick={() => setIsAlive(!isAlive)}
+    ></span>
+  );
 }
