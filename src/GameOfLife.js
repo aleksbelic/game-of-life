@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import Cell from './Cell';
 
 // default board size
-const GAME_OF_LIFE_WIDTH = 20;
-const GAME_OF_LIFE_HEIGHT = 20;
+const GAME_OF_LIFE_WIDTH = 10;
+const GAME_OF_LIFE_HEIGHT = 10;
 
-export default function GameOfLife(props) {
+export default function GameOfLife() {
   const [width, setWidth] = useState(GAME_OF_LIFE_WIDTH);
   const [height, setHeight] = useState(GAME_OF_LIFE_HEIGHT);
   const [cells, setCells] = useState(generateRandomCells());
@@ -19,6 +19,12 @@ export default function GameOfLife(props) {
     return randomCells;
   }
 
+  const updateCellsOnCellClick = clickedCellId => {
+    const [cellRow, cellColumn] = clickedCellId.split('_');
+    cells[cellRow][cellColumn] = !cells[cellRow][cellColumn];
+    setCells(cells);
+  };
+
   return (
     <div id="game-of-life">
       <div id="cells-container">
@@ -26,8 +32,10 @@ export default function GameOfLife(props) {
           <div className="row">
             {cellRow.map((cellIsAlive, columnIndex) => (
               <Cell
-                key={`c_${rowIndex}_${columnIndex}`}
+                dataId={`${rowIndex}_${columnIndex}`}
+                key={`${rowIndex}_${columnIndex}`}
                 isAlive={cellIsAlive}
+                onClick={updateCellsOnCellClick}
               />
             ))}
           </div>
