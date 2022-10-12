@@ -19,11 +19,12 @@ export default function GameOfLife() {
     return randomCells;
   }
 
-  const updateCellsOnCellClick = clickedCellId => {
-    const [cellRow, cellColumn] = clickedCellId.split('_');
-    cells[cellRow][cellColumn] = !cells[cellRow][cellColumn];
-    setCells(cells);
-  };
+  function updateCellsOnCellClick(clickedCellId) {
+    let updatedCells = Array.from(cells);
+    let [cellRow, cellColumn] = clickedCellId.split('_');
+    updatedCells[cellRow][cellColumn] = !cells[cellRow][cellColumn];
+    setCells(updatedCells);
+  }
 
   return (
     <div id="game-of-life">
@@ -35,7 +36,7 @@ export default function GameOfLife() {
                 dataId={`${rowIndex}_${columnIndex}`}
                 key={`${rowIndex}_${columnIndex}`}
                 isAlive={cellIsAlive}
-                onClick={updateCellsOnCellClick}
+                updateCellsOnCellClick={updateCellsOnCellClick}
               />
             ))}
           </div>
