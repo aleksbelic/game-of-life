@@ -61,7 +61,7 @@ export default function GameOfLife() {
       });
     });
     setCells(updatedCells);
-    setGenerationCounter(generationCounter + 1);
+    setGenerationCounter(currentGenCount => currentGenCount + 1);
   }
 
   /**
