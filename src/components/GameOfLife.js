@@ -76,21 +76,34 @@ export default function GameOfLife() {
     setCells(updatedCells);
   }
 
+  function renderRow(cellRow, rowIndex) {
+    return (
+      <div className="row" key={rowIndex}>
+        {cellRow.map((cellIsAlive, columnIndex) =>
+          renderCell(rowIndex, columnIndex, cellIsAlive)
+        )}
+      </div>
+    );
+  }
+
+  function renderCell(rowIndex, columnIndex, cellIsAlive) {
+    const rowIndexColumnIndex = `${rowIndex}_${columnIndex}`;
+    return (
+      <Cell
+        dataId={rowIndexColumnIndex}
+        key={rowIndexColumnIndex}
+        isAlive={cellIsAlive}
+        updateCellsOnCellClick={() =>
+          updateCellsOnCellClick(rowIndexColumnIndex)
+        }
+      />
+    );
+  }
+
   return (
     <div id="game-of-life">
-      <div id="cell-container">
-        {cells.map((cellRow, rowIndex) => (
-          <div className="row" key={`cell_row_${rowIndex}`}>
-            {cellRow.map((cellIsAlive, columnIndex) => (
-              <Cell
-                dataId={`${rowIndex}_${columnIndex}`}
-                key={`${rowIndex}_${columnIndex}`}
-                isAlive={cellIsAlive}
-                updateCellsOnCellClick={updateCellsOnCellClick}
-              />
-            ))}
-          </div>
-        ))}
+      <div id="cells-container">
+        {cells.map((cellRow, rowIndex) => renderRow(cellRow, rowIndex))}
       </div>
       <label id="gen-counter">Generation:&nbsp;{generationCounter}</label>
       <div id="controls-container">

@@ -3,7 +3,7 @@ export default function Cell(props) {
     <span
       data-id={`${props.dataId}`}
       className={`cell${props.isAlive ? ' alive' : ''}`}
-      onClick={() => props.updateCellsOnCellClick(props.dataId)}
+      onClick={props.updateCellsOnCellClick}
     ></span>
   );
 }

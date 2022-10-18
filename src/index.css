@@ -3,7 +3,7 @@
   flex-direction: column;
 }
 
-#game-of-life #cell-container {
+#game-of-life #cells-container {
   display: table;
   width: fit-content;
   height: fit-content;
