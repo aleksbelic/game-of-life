@@ -17,8 +17,8 @@ export default function GameOfLife() {
    */
   function generateRandomCells() {
     let randomCells = Array(height).fill(Array(width).fill(null));
-    randomCells = randomCells.map(cellRow => {
-      return cellRow.map(cellIsAlive => (Math.random() >= 0.5 ? true : false));
+    randomCells = randomCells.map(row => {
+      return row.map(isAlive => (Math.random() >= 0.5 ? true : false));
     });
     return randomCells;
   }
@@ -76,23 +76,23 @@ export default function GameOfLife() {
     setCells(updatedCells);
   }
 
-  function renderRow(cellRow, rowIndex) {
+  function renderRow(row, rowIndex) {
     return (
       <div className="row" key={rowIndex}>
-        {cellRow.map((cellIsAlive, columnIndex) =>
-          renderCell(rowIndex, columnIndex, cellIsAlive)
+        {row.map((isAlive, columnIndex) =>
+          renderCell(rowIndex, columnIndex, isAlive)
         )}
       </div>
     );
   }
 
-  function renderCell(rowIndex, columnIndex, cellIsAlive) {
+  function renderCell(rowIndex, columnIndex, isAlive) {
     const rowIndexColumnIndex = `${rowIndex}_${columnIndex}`;
     return (
       <Cell
         dataId={rowIndexColumnIndex}
         key={rowIndexColumnIndex}
-        isAlive={cellIsAlive}
+        isAlive={isAlive}
         updateCellsOnCellClick={() =>
           updateCellsOnCellClick(rowIndexColumnIndex)
         }
@@ -103,7 +103,7 @@ export default function GameOfLife() {
   return (
     <div id="game-of-life">
       <div id="cells-container">
-        {cells.map((cellRow, rowIndex) => renderRow(cellRow, rowIndex))}
+        {cells.map((row, rowIndex) => renderRow(row, rowIndex))}
       </div>
       <label id="gen-counter">Generation:&nbsp;{generationCounter}</label>
       <div id="controls-container">
