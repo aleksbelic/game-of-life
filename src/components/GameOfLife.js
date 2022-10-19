@@ -16,7 +16,7 @@ export default function GameOfLife() {
    * @returns {Array(Array(boolean))}
    */
   function generateRandomCells() {
-    let randomCells = Array(height).fill(Array(width).fill(null));
+    let randomCells = [...Array(height)].map(() => Array(width).fill(null));
     randomCells = randomCells.map(row => {
       return row.map(isAlive => (Math.random() >= 0.5 ? true : false));
     });
@@ -24,38 +24,39 @@ export default function GameOfLife() {
   }
 
   /**
-   * TODO
+   * Generates next generation of cells and replaces the old ones based on "Game of Life" rules.
    * @returns {void}
    */
   function generateNextGeneration() {
-    let updatedCells = Array(height).fill(Array(width).fill(null));
+    let updatedCells = [...Array(height)].map(() => Array(width).fill(null));
 
-    cells.forEach((cellRow, currentCellRowIndex) => {
-      cellRow.forEach((cell, currentCellColumnIndex) => {
+    cells.forEach((row, rowIndex) => {
+      row.forEach((isAlive, columnIndex) => {
         let aliveNeighboursCount = 0;
 
-        [-1, 0, 1].forEach(neighbourCellRowIndex => {
-          [-1, 0, 1].forEach(neighbourCellColumnIndex => {
+        [-1, 0, 1].forEach(neighbourRowIndex => {
+          [-1, 0, 1].forEach(neighbourColumnIndex => {
+            if (neighbourRowIndex === 0 && neighbourColumnIndex === 0) return;
             if (
-              cells[currentCellRowIndex + neighbourCellRowIndex] !==
-                undefined &&
-              cells[currentCellRowIndex + neighbourCellRowIndex][
-                currentCellColumnIndex + neighbourCellColumnIndex
+              cells[rowIndex + neighbourRowIndex] !== undefined &&
+              cells[rowIndex + neighbourRowIndex][
+                columnIndex + neighbourColumnIndex
               ] !== undefined &&
-              cells[currentCellRowIndex + neighbourCellRowIndex][
-                currentCellColumnIndex + neighbourCellColumnIndex
+              cells[rowIndex + neighbourRowIndex][
+                columnIndex + neighbourColumnIndex
               ] === true
-            )
+            ) {
               aliveNeighboursCount++;
+            }
           });
         });
 
         // applying Game of Life rules to generate next generation cells
-        if (cell === true) {
-          updatedCells[currentCellRowIndex][currentCellColumnIndex] =
+        if (isAlive) {
+          updatedCells[rowIndex][columnIndex] =
             aliveNeighboursCount < 2 || aliveNeighboursCount > 3 ? false : true;
         } else {
-          updatedCells[currentCellRowIndex][currentCellColumnIndex] =
+          updatedCells[rowIndex][columnIndex] =
             aliveNeighboursCount === 3 ? true : false;
         }
       });
@@ -65,8 +66,8 @@ export default function GameOfLife() {
   }
 
   /**
-   * TODO
-   * @param {string} clickedCellDataId
+   * Chagnes clicked cell's living state: gives life to the dead cell or kills the living cell.
+   * @param {string} clickedCellDataId data-ID attr used for locating cell's position (composed of cell's row & column indexes separated by underscore, e.g. "2_1" (3rd row, 2nd column).
    * @returns {void}
    */
   function updateCellsOnCellClick(clickedCellDataId) {
@@ -76,6 +77,12 @@ export default function GameOfLife() {
     setCells(updatedCells);
   }
 
+  /**
+   * Generates JSX for a row of cells.
+   * @param {boolean[]} row array of cells in a row
+   * @param {number} rowIndex index of the row in a grid
+   * @returns {JSX}
+   */
   function renderRow(row, rowIndex) {
     return (
       <div className="row" key={rowIndex}>
@@ -86,6 +93,13 @@ export default function GameOfLife() {
     );
   }
 
+  /**
+   * Generates JSX for a single cell.
+   * @param {number} rowIndex index of the row in a grid
+   * @param {number} columnIndex index of the column in a grid
+   * @param {boolean} isAlive if cell is alive or not
+   * @returns {JSX}
+   */
   function renderCell(rowIndex, columnIndex, isAlive) {
     const rowIndexColumnIndex = `${rowIndex}_${columnIndex}`;
     return (
