@@ -3,6 +3,11 @@
   flex-direction: column;
 }
 
+#game-of-life button {
+  cursor: pointer;
+  min-width: 40px;
+}
+
 #game-of-life #cells-container {
   display: table;
   width: fit-content;

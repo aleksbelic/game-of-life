@@ -4,16 +4,18 @@ import Cell from './Cell';
 // default board size
 const GAME_OF_LIFE_WIDTH = 10;
 const GAME_OF_LIFE_HEIGHT = 10;
+const AUTOPLAY_SPEED = 2000; // ms
 
 export default function GameOfLife() {
   const [width, setWidth] = useState(GAME_OF_LIFE_WIDTH);
   const [height, setHeight] = useState(GAME_OF_LIFE_HEIGHT);
   const [cells, setCells] = useState(generateRandomCells());
   const [generationCounter, setGenerationCounter] = useState(1);
+  const [autoplayInterval, setAutoplayInterval] = useState(null);
 
   /**
    * Randomly generates 2D array of living & dead cells.
-   * @returns {Array(Array(boolean))}
+   * @returns {[boolean[]]}
    */
   function generateRandomCells() {
     let randomCells = [...Array(height)].map(() => Array(width).fill(null));
@@ -37,7 +39,7 @@ export default function GameOfLife() {
         [-1, 0, 1].forEach(neighbourRowIndex => {
           [-1, 0, 1].forEach(neighbourColumnIndex => {
             if (neighbourRowIndex === 0 && neighbourColumnIndex === 0) return;
-            if (
+            else if (
               cells[rowIndex + neighbourRowIndex] !== undefined &&
               cells[rowIndex + neighbourRowIndex][
                 columnIndex + neighbourColumnIndex
@@ -63,6 +65,24 @@ export default function GameOfLife() {
     });
     setCells(updatedCells);
     setGenerationCounter(currentGenCount => currentGenCount + 1);
+  }
+
+  /**
+   * TODO
+   * @returns
+   */
+  function runOrPauseAutoplay(e) {
+    let newAutoplayInterval = null;
+
+    if (autoplayInterval === null) {
+      newAutoplayInterval = setInterval(generateNextGeneration, AUTOPLAY_SPEED);
+      e.target.innerHTML = '&#9724;'; // "stop" symbol
+    } else {
+      clearInterval(autoplayInterval);
+      e.target.innerHTML = '&#9654;&#9654;'; // "fast-forward" symbol
+    }
+
+    setAutoplayInterval(newAutoplayInterval);
   }
 
   /**
@@ -127,6 +147,13 @@ export default function GameOfLife() {
           onClick={generateNextGeneration}
         >
           &#9654;
+        </button>
+        <button
+          id="autoplay-button"
+          title="Autoplay"
+          onClick={e => runOrPauseAutoplay(e)}
+        >
+          &#9654;&#9654;
         </button>
       </div>
     </div>
