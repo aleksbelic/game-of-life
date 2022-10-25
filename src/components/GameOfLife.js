@@ -4,12 +4,12 @@ import Cell from './Cell';
 // default board size
 const GAME_OF_LIFE_WIDTH = 10;
 const GAME_OF_LIFE_HEIGHT = 10;
-const AUTOPLAY_SPEED = 2000; // ms
+const AUTOPLAY_SPEED = 1000; // ms
 
 export default function GameOfLife() {
   const [width, setWidth] = useState(GAME_OF_LIFE_WIDTH);
   const [height, setHeight] = useState(GAME_OF_LIFE_HEIGHT);
-  const [cells, setCells] = useState(generateRandomCells());
+  const [cells, setCells] = useState(generateRandomCells);
   const [generationCounter, setGenerationCounter] = useState(1);
   const [autoplayInterval, setAutoplayInterval] = useState(null);
 
@@ -19,10 +19,9 @@ export default function GameOfLife() {
    */
   function generateRandomCells() {
     let randomCells = [...Array(height)].map(() => Array(width).fill(null));
-    randomCells = randomCells.map(row => {
-      return row.map(isAlive => (Math.random() >= 0.5 ? true : false));
-    });
-    return randomCells;
+    return randomCells.map(row =>
+      row.map(() => (Math.random() >= 0.5 ? true : false))
+    );
   }
 
   /**
@@ -30,41 +29,47 @@ export default function GameOfLife() {
    * @returns {void}
    */
   function generateNextGeneration() {
-    let updatedCells = [...Array(height)].map(() => Array(width).fill(null));
+    setGenerationCounter(currentGeneration => currentGeneration + 1);
 
-    cells.forEach((row, rowIndex) => {
-      row.forEach((isAlive, columnIndex) => {
-        let aliveNeighboursCount = 0;
+    setCells(cells => {
+      let updatedCells = [...Array(height)].map(() => Array(width).fill(null));
 
-        [-1, 0, 1].forEach(neighbourRowIndex => {
-          [-1, 0, 1].forEach(neighbourColumnIndex => {
-            if (neighbourRowIndex === 0 && neighbourColumnIndex === 0) return;
-            else if (
-              cells[rowIndex + neighbourRowIndex] !== undefined &&
-              cells[rowIndex + neighbourRowIndex][
-                columnIndex + neighbourColumnIndex
-              ] !== undefined &&
-              cells[rowIndex + neighbourRowIndex][
-                columnIndex + neighbourColumnIndex
-              ] === true
-            ) {
-              aliveNeighboursCount++;
-            }
+      cells.forEach((row, rowIndex) => {
+        row.forEach((isAlive, columnIndex) => {
+          let livingNeighboursCount = 0;
+
+          [-1, 0, 1].forEach(neighbourRowIndex => {
+            [-1, 0, 1].forEach(neighbourColumnIndex => {
+              if (neighbourRowIndex === 0 && neighbourColumnIndex === 0) return;
+              else if (
+                cells[rowIndex + neighbourRowIndex] !== undefined &&
+                cells[rowIndex + neighbourRowIndex][
+                  columnIndex + neighbourColumnIndex
+                ] !== undefined &&
+                cells[rowIndex + neighbourRowIndex][
+                  columnIndex + neighbourColumnIndex
+                ] === true
+              ) {
+                livingNeighboursCount++;
+              }
+            });
           });
-        });
 
-        // applying Game of Life rules to generate next generation cells
-        if (isAlive) {
-          updatedCells[rowIndex][columnIndex] =
-            aliveNeighboursCount < 2 || aliveNeighboursCount > 3 ? false : true;
-        } else {
-          updatedCells[rowIndex][columnIndex] =
-            aliveNeighboursCount === 3 ? true : false;
-        }
+          // applying Game of Life rules to generate next generation cells
+          if (isAlive) {
+            updatedCells[rowIndex][columnIndex] =
+              livingNeighboursCount < 2 || livingNeighboursCount > 3
+                ? false
+                : true;
+          } else {
+            updatedCells[rowIndex][columnIndex] =
+              livingNeighboursCount === 3 ? true : false;
+          }
+        });
       });
+
+      return updatedCells;
     });
-    setCells(updatedCells);
-    setGenerationCounter(currentGenCount => currentGenCount + 1);
   }
 
   /**
@@ -72,14 +77,17 @@ export default function GameOfLife() {
    * @returns
    */
   function runOrPauseAutoplay(e) {
+    let nextGenBtn = document.getElementById('next-gen-button');
     let newAutoplayInterval = null;
 
     if (autoplayInterval === null) {
+      nextGenBtn.setAttribute('disabled', 'true');
       newAutoplayInterval = setInterval(generateNextGeneration, AUTOPLAY_SPEED);
       e.target.innerHTML = '&#9724;'; // "stop" symbol
     } else {
       clearInterval(autoplayInterval);
       e.target.innerHTML = '&#9654;&#9654;'; // "fast-forward" symbol
+      nextGenBtn.removeAttribute('disabled');
     }
 
     setAutoplayInterval(newAutoplayInterval);
