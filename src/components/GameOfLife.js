@@ -10,7 +10,7 @@ export default function GameOfLife() {
   const [width, setWidth] = useState(GAME_OF_LIFE_WIDTH);
   const [height, setHeight] = useState(GAME_OF_LIFE_HEIGHT);
   const [cells, setCells] = useState(generateRandomCells);
-  const [generationCounter, setGenerationCounter] = useState(1);
+  const [generationCount, setGenerationCount] = useState(1);
   const [autoplayInterval, setAutoplayInterval] = useState(null);
 
   /**
@@ -29,7 +29,7 @@ export default function GameOfLife() {
    * @returns {void}
    */
   function generateNextGeneration() {
-    setGenerationCounter(currentGeneration => currentGeneration + 1);
+    setGenerationCount(currentGeneration => currentGeneration + 1);
 
     setCells(cells => {
       let updatedCells = [...Array(height)].map(() => Array(width).fill(null));
@@ -70,6 +70,20 @@ export default function GameOfLife() {
 
       return updatedCells;
     });
+  }
+
+  /**
+   * Returns count of living cells.
+   * @returns {number}
+   */
+  function getLivingCellCount() {
+    return cells
+      .map(row => row.filter(isAlive => isAlive === true).length)
+      .reduce(
+        (livingCellsCount, livingCellsCountInCurrentRow) =>
+          livingCellsCount + livingCellsCountInCurrentRow,
+        0
+      );
   }
 
   /**
@@ -147,7 +161,10 @@ export default function GameOfLife() {
       <div id="cells-container">
         {cells.map((row, rowIndex) => renderRow(row, rowIndex))}
       </div>
-      <label id="gen-counter">Generation:&nbsp;{generationCounter}</label>
+      <label id="gen-counter">Generation:&nbsp;{generationCount}</label>
+      <label id="living-cells-counter">
+        Living cells:&nbsp;{getLivingCellCount()}
+      </label>
       <div id="controls-container">
         <button
           id="next-gen-button"
