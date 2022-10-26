@@ -1,0 +1,56 @@
+#game-of-life {
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+}
+
+#game-of-life button {
+  cursor: pointer;
+  min-width: 40px;
+  font-weight: bold;
+}
+
+#game-of-life #cells-container {
+  display: table;
+  width: fit-content;
+  height: fit-content;
+  background-color: #ededed;
+  padding: 5px;
+}
+
+#game-of-life .row {
+  display: table-row;
+}
+
+#game-of-life .cell {
+  display: table-cell;
+  min-width: 15px;
+  height: 15px;
+  border: 2px solid #d8d7d7;
+  border-radius: 50%;
+  cursor: pointer;
+}
+#game-of-life .cell.alive {
+  border-color: #0b6c0b;
+  background-color: #5bbe5b;
+}
+#game-of-life .cell:hover,
+#game-of-life .cell.alive:hover {
+  border-color: #ff0000;
+}
+
+#stats-and-controls-container {
+  margin: 5px 0 10px 0;
+  display: flex;
+  flex-direction: column;
+}
+#stats-container {
+  display: flex;
+  flex-direction: column;
+}
+#controls-container {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
