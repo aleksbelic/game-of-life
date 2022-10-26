@@ -8,6 +8,7 @@
 #game-of-life button {
   cursor: pointer;
   min-width: 40px;
+  font-weight: bold;
 }
 
 #game-of-life #cells-container {

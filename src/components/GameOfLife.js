@@ -1,10 +1,10 @@
-import {useState, useRef} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import Cell from './Cell';
 
 // default board size
 const GAME_OF_LIFE_WIDTH = 10;
 const GAME_OF_LIFE_HEIGHT = 10;
-const AUTOPLAY_SPEED = 1000; // ms
+const AUTOPLAY_SPEED = 500; // ms
 
 export default function GameOfLife() {
   const [width, setWidth] = useState(GAME_OF_LIFE_WIDTH);
@@ -12,8 +12,18 @@ export default function GameOfLife() {
   const [cells, setCells] = useState(generateRandomCells);
   const [generationCount, setGenerationCount] = useState(1);
   const [autoplayInterval, setAutoplayInterval] = useState(null);
+  // controls
   const nextGenBtnRef = useRef();
   const autoplayBtnRef = useRef();
+  const reloadBtnRef = useRef();
+
+  useEffect(() => {
+    if (getLivingCellCount() === 0) {
+      stopAutoplay();
+      nextGenBtnRef.current.setAttribute('disabled', 'true');
+      autoplayBtnRef.current.setAttribute('disabled', 'true');
+    }
+  });
 
   /**
    * Randomly generates 2D array of living & dead cells.
@@ -92,15 +102,6 @@ export default function GameOfLife() {
           livingCellsCount + livingCellsCountInCurrentRow,
         0
       );
-  }
-
-  /**
-   * Handles starting & stopping of autoplay.
-   * @returns {void}
-   */
-  function startOrStopAutoplay() {
-    if (autoplayInterval === null) startAutoplay();
-    else stopAutoplay();
   }
 
   /**
@@ -202,9 +203,25 @@ export default function GameOfLife() {
             ref={autoplayBtnRef}
             id="autoplay-button"
             title="Autoplay"
-            onClick={startOrStopAutoplay}
+            onClick={() => {
+              if (autoplayInterval === null) startAutoplay();
+              else stopAutoplay();
+            }}
           >
             &#9654;&#9654;
+          </button>
+          <button
+            ref={reloadBtnRef}
+            id="reload-button"
+            title="Reload"
+            onClick={() => {
+              setGenerationCount(1);
+              setCells(generateRandomCells());
+              nextGenBtnRef.current.removeAttribute('disabled');
+              autoplayBtnRef.current.removeAttribute('disabled');
+            }}
+          >
+            &#8635;
           </button>
         </div>
       </div>
