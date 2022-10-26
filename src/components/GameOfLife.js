@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 import Cell from './Cell';
 
 // default board size
@@ -12,6 +12,8 @@ export default function GameOfLife() {
   const [cells, setCells] = useState(generateRandomCells);
   const [generationCount, setGenerationCount] = useState(1);
   const [autoplayInterval, setAutoplayInterval] = useState(null);
+  const nextGenBtnRef = useRef();
+  const autoplayBtnRef = useRef();
 
   /**
    * Randomly generates 2D array of living & dead cells.
@@ -106,12 +108,9 @@ export default function GameOfLife() {
    * @returns {void}
    */
   function startAutoplay() {
-    let nextGenBtn = document.getElementById('next-gen-button');
-    let autoplayBtn = document.getElementById('autoplay-button');
-
-    nextGenBtn.setAttribute('disabled', 'true');
+    nextGenBtnRef.current.setAttribute('disabled', 'true');
     setAutoplayInterval(setInterval(implementNextGeneration, AUTOPLAY_SPEED));
-    autoplayBtn.innerHTML = '&#9724;'; // "stop" symbol
+    autoplayBtnRef.current.innerHTML = '&#9724;'; // "stop" symbol
   }
 
   /**
@@ -119,14 +118,10 @@ export default function GameOfLife() {
    * @returns {void}
    */
   function stopAutoplay() {
-    let nextGenBtn = document.getElementById('next-gen-button');
-    let autoplayBtn = document.getElementById('autoplay-button');
-
     clearInterval(autoplayInterval);
     setAutoplayInterval(null);
-
-    autoplayBtn.innerHTML = '&#9654;&#9654;'; // "fast-forward" symbol
-    nextGenBtn.removeAttribute('disabled');
+    autoplayBtnRef.current.innerHTML = '&#9654;&#9654;'; // "fast-forward" symbol
+    nextGenBtnRef.current.removeAttribute('disabled');
   }
 
   /**
@@ -196,6 +191,7 @@ export default function GameOfLife() {
 
         <div id="controls-container">
           <button
+            ref={nextGenBtnRef}
             id="next-gen-button"
             title="Next Generation"
             onClick={implementNextGeneration}
@@ -203,6 +199,7 @@ export default function GameOfLife() {
             &#9654;
           </button>
           <button
+            ref={autoplayBtnRef}
             id="autoplay-button"
             title="Autoplay"
             onClick={startOrStopAutoplay}
