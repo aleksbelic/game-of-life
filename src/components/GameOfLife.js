@@ -177,10 +177,6 @@ export default function GameOfLife() {
 
   return (
     <div id="game-of-life">
-      <div id="cells-container">
-        {cells.map((row, rowIndex) => renderRow(row, rowIndex))}
-      </div>
-
       <div id="stats-and-controls-container">
         <div id="stats-container">
           <label id="gen-counter">
@@ -225,6 +221,10 @@ export default function GameOfLife() {
             &#8635;
           </button>
         </div>
+      </div>
+
+      <div id="cells-container">
+        {cells.map((row, rowIndex) => renderRow(row, rowIndex))}
       </div>
     </div>
   );
