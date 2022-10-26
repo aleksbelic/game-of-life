@@ -2,6 +2,7 @@
 
 [![GitHub release](https://img.shields.io/github/release/aleksbelic/game-of-life.svg?style=flat-square)](https://GitHub.com/aleksbelic/game-of-life/releases/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![GitHub license](https://img.shields.io/github/license/aleksbelic/game-of-life?style=flat-square)](https://raw.githubusercontent.com/aleksbelic/game-of-life/main/LICENSE.md)
 
 React implementaion of John Conway's [Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 
