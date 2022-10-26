@@ -2,6 +2,8 @@
 
 React implementaion of John Conway's [Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 
+![game-of-life-demo](https://user-images.githubusercontent.com/8314231/198154148-07d47dbd-f95c-46c3-8cd5-f83a104f8f9e.gif)
+
 ## RULES
 
 - Any `live` cell with `fewer than 2` live neighbours `dies`, as if caused by underpopulation.
