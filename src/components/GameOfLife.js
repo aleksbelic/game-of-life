@@ -25,51 +25,57 @@ export default function GameOfLife() {
   }
 
   /**
+   * Returns next generation of cells following the "Game of Life" rules.
+   * @param {[boolean[]]} currentCells 2D array of living & dead cells
+   * @returns {[boolean[]]} next generation of cells
+   */
+  function getNextGeneration(currentCells) {
+    let updatedCells = [...Array(height)].map(() => Array(width).fill(null));
+
+    currentCells.forEach((row, rowIndex) => {
+      row.forEach((isAlive, columnIndex) => {
+        let livingNeighboursCount = 0;
+
+        [-1, 0, 1].forEach(neighbourRowIndex => {
+          [-1, 0, 1].forEach(neighbourColumnIndex => {
+            if (neighbourRowIndex === 0 && neighbourColumnIndex === 0) return;
+            else if (
+              currentCells[rowIndex + neighbourRowIndex] !== undefined &&
+              currentCells[rowIndex + neighbourRowIndex][
+                columnIndex + neighbourColumnIndex
+              ] !== undefined &&
+              currentCells[rowIndex + neighbourRowIndex][
+                columnIndex + neighbourColumnIndex
+              ] === true
+            ) {
+              livingNeighboursCount++;
+            }
+          });
+        });
+
+        // applying Game of Life rules to generate next generation cells
+        if (isAlive) {
+          updatedCells[rowIndex][columnIndex] =
+            livingNeighboursCount < 2 || livingNeighboursCount > 3
+              ? false
+              : true;
+        } else {
+          updatedCells[rowIndex][columnIndex] =
+            livingNeighboursCount === 3 ? true : false;
+        }
+      });
+    });
+
+    return updatedCells;
+  }
+
+  /**
    * Generates next generation of cells and replaces the old ones based on "Game of Life" rules.
    * @returns {void}
    */
-  function generateNextGeneration() {
+  function implementNextGeneration() {
     setGenerationCount(currentGeneration => currentGeneration + 1);
-
-    setCells(cells => {
-      let updatedCells = [...Array(height)].map(() => Array(width).fill(null));
-
-      cells.forEach((row, rowIndex) => {
-        row.forEach((isAlive, columnIndex) => {
-          let livingNeighboursCount = 0;
-
-          [-1, 0, 1].forEach(neighbourRowIndex => {
-            [-1, 0, 1].forEach(neighbourColumnIndex => {
-              if (neighbourRowIndex === 0 && neighbourColumnIndex === 0) return;
-              else if (
-                cells[rowIndex + neighbourRowIndex] !== undefined &&
-                cells[rowIndex + neighbourRowIndex][
-                  columnIndex + neighbourColumnIndex
-                ] !== undefined &&
-                cells[rowIndex + neighbourRowIndex][
-                  columnIndex + neighbourColumnIndex
-                ] === true
-              ) {
-                livingNeighboursCount++;
-              }
-            });
-          });
-
-          // applying Game of Life rules to generate next generation cells
-          if (isAlive) {
-            updatedCells[rowIndex][columnIndex] =
-              livingNeighboursCount < 2 || livingNeighboursCount > 3
-                ? false
-                : true;
-          } else {
-            updatedCells[rowIndex][columnIndex] =
-              livingNeighboursCount === 3 ? true : false;
-          }
-        });
-      });
-
-      return updatedCells;
-    });
+    setCells(currentCells => getNextGeneration(currentCells));
   }
 
   /**
@@ -87,24 +93,40 @@ export default function GameOfLife() {
   }
 
   /**
-   * TODO
-   * @returns
+   * Handles starting & stopping of autoplay.
+   * @returns {void}
    */
-  function runOrPauseAutoplay(e) {
+  function startOrStopAutoplay() {
+    if (autoplayInterval === null) startAutoplay();
+    else stopAutoplay();
+  }
+
+  /**
+   * Processes starting-autoplay tasks.
+   * @returns {void}
+   */
+  function startAutoplay() {
     let nextGenBtn = document.getElementById('next-gen-button');
-    let newAutoplayInterval = null;
+    let autoplayBtn = document.getElementById('autoplay-button');
 
-    if (autoplayInterval === null) {
-      nextGenBtn.setAttribute('disabled', 'true');
-      newAutoplayInterval = setInterval(generateNextGeneration, AUTOPLAY_SPEED);
-      e.target.innerHTML = '&#9724;'; // "stop" symbol
-    } else {
-      clearInterval(autoplayInterval);
-      e.target.innerHTML = '&#9654;&#9654;'; // "fast-forward" symbol
-      nextGenBtn.removeAttribute('disabled');
-    }
+    nextGenBtn.setAttribute('disabled', 'true');
+    setAutoplayInterval(setInterval(implementNextGeneration, AUTOPLAY_SPEED));
+    autoplayBtn.innerHTML = '&#9724;'; // "stop" symbol
+  }
 
-    setAutoplayInterval(newAutoplayInterval);
+  /**
+   * Processes stopping-autoplay tasks.
+   * @returns {void}
+   */
+  function stopAutoplay() {
+    let nextGenBtn = document.getElementById('next-gen-button');
+    let autoplayBtn = document.getElementById('autoplay-button');
+
+    clearInterval(autoplayInterval);
+    setAutoplayInterval(null);
+
+    autoplayBtn.innerHTML = '&#9654;&#9654;'; // "fast-forward" symbol
+    nextGenBtn.removeAttribute('disabled');
   }
 
   /**
@@ -161,25 +183,33 @@ export default function GameOfLife() {
       <div id="cells-container">
         {cells.map((row, rowIndex) => renderRow(row, rowIndex))}
       </div>
-      <label id="gen-counter">Generation:&nbsp;{generationCount}</label>
-      <label id="living-cells-counter">
-        Living cells:&nbsp;{getLivingCellCount()}
-      </label>
-      <div id="controls-container">
-        <button
-          id="next-gen-button"
-          title="Next Generation"
-          onClick={generateNextGeneration}
-        >
-          &#9654;
-        </button>
-        <button
-          id="autoplay-button"
-          title="Autoplay"
-          onClick={e => runOrPauseAutoplay(e)}
-        >
-          &#9654;&#9654;
-        </button>
+
+      <div id="stats-and-controls-container">
+        <div id="stats-container">
+          <label id="gen-counter">
+            Generation:&nbsp;<b>{generationCount}</b>
+          </label>
+          <label id="living-cells-counter">
+            Living cells:&nbsp;<b>{getLivingCellCount()}</b>
+          </label>
+        </div>
+
+        <div id="controls-container">
+          <button
+            id="next-gen-button"
+            title="Next Generation"
+            onClick={implementNextGeneration}
+          >
+            &#9654;
+          </button>
+          <button
+            id="autoplay-button"
+            title="Autoplay"
+            onClick={startOrStopAutoplay}
+          >
+            &#9654;&#9654;
+          </button>
+        </div>
       </div>
     </div>
   );
