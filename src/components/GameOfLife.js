@@ -1,14 +1,12 @@
-import {useState, useRef, useEffect} from 'react';
+import {useState, useRef, useEffect, useCallback} from 'react';
 import Cell from './Cell';
 
 // default board size
-const GAME_OF_LIFE_WIDTH = 10;
-const GAME_OF_LIFE_HEIGHT = 10;
-const AUTOPLAY_SPEED = 500; // ms
+const GAME_OF_LIFE_WIDTH = 30;
+const GAME_OF_LIFE_HEIGHT = 15;
+const AUTOPLAY_SPEED = 100; // ms
 
 export default function GameOfLife() {
-  const [width, setWidth] = useState(GAME_OF_LIFE_WIDTH);
-  const [height, setHeight] = useState(GAME_OF_LIFE_HEIGHT);
   const [cells, setCells] = useState(generateRandomCells);
   const [generationCount, setGenerationCount] = useState(1);
   const [autoplayInterval, setAutoplayInterval] = useState(null);
@@ -17,32 +15,61 @@ export default function GameOfLife() {
   const autoplayBtnRef = useRef();
   const reloadBtnRef = useRef();
 
-  useEffect(() => {
-    if (getLivingCellCount() === 0) {
-      stopAutoplay();
-      nextGenBtnRef.current.setAttribute('disabled', 'true');
-      autoplayBtnRef.current.setAttribute('disabled', 'true');
-    }
-  });
-
   /**
    * Randomly generates 2D array of living & dead cells.
    * @returns {[boolean[]]}
    */
   function generateRandomCells() {
-    let randomCells = [...Array(height)].map(() => Array(width).fill(null));
+    let randomCells = [...Array(GAME_OF_LIFE_HEIGHT)].map(() =>
+      Array(GAME_OF_LIFE_WIDTH).fill(null)
+    );
     return randomCells.map(row =>
       row.map(() => (Math.random() >= 0.5 ? true : false))
     );
   }
 
   /**
+   * Returns count of living cells.
+   * @returns {number}
+   */
+  const getLivingCellCount = useCallback(() => {
+    return cells
+      .map(row => row.filter(isAlive => isAlive === true).length)
+      .reduce(
+        (livingCellsCount, livingCellsCountInCurrentRow) =>
+          livingCellsCount + livingCellsCountInCurrentRow,
+        0
+      );
+  }, [cells]);
+
+  /**
+   * Processes stopping-autoplay tasks.
+   * @returns {void}
+   */
+  const stopAutoplay = useCallback(() => {
+    clearInterval(autoplayInterval);
+    setAutoplayInterval(null);
+    autoplayBtnRef.current.innerHTML = '&#9654;&#9654;'; // "fast-forward" symbol
+    nextGenBtnRef.current.removeAttribute('disabled');
+  }, [autoplayInterval]);
+
+  useEffect(() => {
+    if (getLivingCellCount() === 0) {
+      stopAutoplay();
+      nextGenBtnRef.current.setAttribute('disabled', 'true');
+      autoplayBtnRef.current.setAttribute('disabled', 'true');
+    }
+  }, [getLivingCellCount, stopAutoplay]);
+
+  /**
    * Returns next generation of cells following the "Game of Life" rules.
    * @param {[boolean[]]} currentCells 2D array of living & dead cells
    * @returns {[boolean[]]} next generation of cells
    */
-  function getNextGeneration(currentCells) {
-    let updatedCells = [...Array(height)].map(() => Array(width).fill(null));
+  const getNextGeneration = currentCells => {
+    let updatedCells = [...Array(GAME_OF_LIFE_HEIGHT)].map(() =>
+      Array(GAME_OF_LIFE_WIDTH).fill(null)
+    );
 
     currentCells.forEach((row, rowIndex) => {
       row.forEach((isAlive, columnIndex) => {
@@ -79,63 +106,38 @@ export default function GameOfLife() {
     });
 
     return updatedCells;
-  }
+  };
 
   /**
    * Generates next generation of cells and replaces the old ones based on "Game of Life" rules.
    * @returns {void}
    */
-  function implementNextGeneration() {
+  const implementNextGeneration = () => {
     setGenerationCount(currentGeneration => currentGeneration + 1);
     setCells(currentCells => getNextGeneration(currentCells));
-  }
-
-  /**
-   * Returns count of living cells.
-   * @returns {number}
-   */
-  function getLivingCellCount() {
-    return cells
-      .map(row => row.filter(isAlive => isAlive === true).length)
-      .reduce(
-        (livingCellsCount, livingCellsCountInCurrentRow) =>
-          livingCellsCount + livingCellsCountInCurrentRow,
-        0
-      );
-  }
+  };
 
   /**
    * Processes starting-autoplay tasks.
    * @returns {void}
    */
-  function startAutoplay() {
+  const startAutoplay = () => {
     nextGenBtnRef.current.setAttribute('disabled', 'true');
     setAutoplayInterval(setInterval(implementNextGeneration, AUTOPLAY_SPEED));
     autoplayBtnRef.current.innerHTML = '&#9724;'; // "stop" symbol
-  }
-
-  /**
-   * Processes stopping-autoplay tasks.
-   * @returns {void}
-   */
-  function stopAutoplay() {
-    clearInterval(autoplayInterval);
-    setAutoplayInterval(null);
-    autoplayBtnRef.current.innerHTML = '&#9654;&#9654;'; // "fast-forward" symbol
-    nextGenBtnRef.current.removeAttribute('disabled');
-  }
+  };
 
   /**
    * Chagnes clicked cell's living state: gives life to the dead cell or kills the living cell.
-   * @param {string} clickedCellDataId data-ID attr used for locating cell's position (composed of cell's row & column indexes separated by underscore, e.g. "2_1" (3rd row, 2nd column).
+   * @param {string} clickedCellKey unique key used for locating cell's position (composed of cell's row & column indexes separated by underscore, e.g. "2_1" (3rd row, 2nd column)
    * @returns {void}
    */
-  function updateCellsOnCellClick(clickedCellDataId) {
+  const updateCellsOnCellClick = clickedCellKey => {
     let updatedCells = Array.from(cells);
-    let [rowIndex, columnIndex] = clickedCellDataId.split('_');
+    let [rowIndex, columnIndex] = clickedCellKey.split('_');
     updatedCells[rowIndex][columnIndex] = !cells[rowIndex][columnIndex];
     setCells(updatedCells);
-  }
+  };
 
   /**
    * Generates JSX for a row of cells.
@@ -143,7 +145,7 @@ export default function GameOfLife() {
    * @param {number} rowIndex index of the row in a grid
    * @returns {JSX}
    */
-  function renderRow(row, rowIndex) {
+  const renderRow = (row, rowIndex) => {
     return (
       <div className="row" key={rowIndex}>
         {row.map((isAlive, columnIndex) =>
@@ -151,7 +153,7 @@ export default function GameOfLife() {
         )}
       </div>
     );
-  }
+  };
 
   /**
    * Generates JSX for a single cell.
@@ -160,11 +162,10 @@ export default function GameOfLife() {
    * @param {boolean} isAlive if cell is alive or not
    * @returns {JSX}
    */
-  function renderCell(rowIndex, columnIndex, isAlive) {
+  const renderCell = (rowIndex, columnIndex, isAlive) => {
     const rowIndexColumnIndex = `${rowIndex}_${columnIndex}`;
     return (
       <Cell
-        dataId={rowIndexColumnIndex}
         key={rowIndexColumnIndex}
         isAlive={isAlive}
         updateCellsOnCellClick={() =>
@@ -172,7 +173,7 @@ export default function GameOfLife() {
         }
       />
     );
-  }
+  };
 
   return (
     <div id="game-of-life">
