@@ -1,9 +1,8 @@
 import {useState, useRef, useEffect, useCallback} from 'react';
 import Cell from './Cell';
 
-// default board size
-const GAME_OF_LIFE_WIDTH = 30;
-const GAME_OF_LIFE_HEIGHT = 15;
+const GRID_WIDTH = 30;
+const GRID_HEIGHT = 15;
 const AUTOPLAY_SPEED = 100; // ms
 
 export default function GameOfLife() {
@@ -20,8 +19,8 @@ export default function GameOfLife() {
    * @returns {[boolean[]]}
    */
   function generateRandomCells() {
-    let randomCells = [...Array(GAME_OF_LIFE_HEIGHT)].map(() =>
-      Array(GAME_OF_LIFE_WIDTH).fill(null)
+    let randomCells = [...Array(GRID_HEIGHT)].map(() =>
+      Array(GRID_WIDTH).fill(null)
     );
     return randomCells.map(row =>
       row.map(() => (Math.random() >= 0.5 ? true : false))
@@ -67,8 +66,8 @@ export default function GameOfLife() {
    * @returns {[boolean[]]} next generation of cells
    */
   const getNextGeneration = currentCells => {
-    let updatedCells = [...Array(GAME_OF_LIFE_HEIGHT)].map(() =>
-      Array(GAME_OF_LIFE_WIDTH).fill(null)
+    let updatedCells = [...Array(GRID_HEIGHT)].map(() =>
+      Array(GRID_WIDTH).fill(null)
     );
 
     currentCells.forEach((row, rowIndex) => {
