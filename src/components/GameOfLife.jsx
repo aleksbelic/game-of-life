@@ -1,8 +1,8 @@
 import {useState, useRef, useEffect, useCallback} from 'react';
 import Cell from './Cell';
 
-const GRID_WIDTH = 30;
-const GRID_HEIGHT = 15;
+const GRID_WIDTH = 30; // cell count
+const GRID_HEIGHT = 15; // cell count
 const AUTOPLAY_SPEED = 100; // ms
 
 export default function GameOfLife() {
@@ -15,7 +15,7 @@ export default function GameOfLife() {
   const reloadBtnRef = useRef();
 
   /**
-   * Randomly generates 2D array of living & dead cells.
+   * Randomly generates 2D array [GRID_WIDTH x GRID_HEIGHT] of living & dead cells.
    * @returns {[boolean[]]}
    */
   function generateRandomCells() {
@@ -72,21 +72,21 @@ export default function GameOfLife() {
 
     currentCells.forEach((row, rowIndex) => {
       row.forEach((isAlive, columnIndex) => {
-        let livingNeighboursCount = 0;
+        let livingNeighborsCount = 0;
 
-        [-1, 0, 1].forEach(neighbourRowIndex => {
-          [-1, 0, 1].forEach(neighbourColumnIndex => {
-            if (neighbourRowIndex === 0 && neighbourColumnIndex === 0) return;
+        [-1, 0, 1].forEach(neighborRowIndex => {
+          [-1, 0, 1].forEach(neighborColumnIndex => {
+            if (neighborRowIndex === 0 && neighborColumnIndex === 0) return;
             else if (
-              currentCells[rowIndex + neighbourRowIndex] !== undefined &&
-              currentCells[rowIndex + neighbourRowIndex][
-                columnIndex + neighbourColumnIndex
+              currentCells[rowIndex + neighborRowIndex] !== undefined &&
+              currentCells[rowIndex + neighborRowIndex][
+                columnIndex + neighborColumnIndex
               ] !== undefined &&
-              currentCells[rowIndex + neighbourRowIndex][
-                columnIndex + neighbourColumnIndex
+              currentCells[rowIndex + neighborRowIndex][
+                columnIndex + neighborColumnIndex
               ] === true
             ) {
-              livingNeighboursCount++;
+              livingNeighborsCount++;
             }
           });
         });
@@ -94,12 +94,10 @@ export default function GameOfLife() {
         // applying Game of Life rules to generate next generation cells
         if (isAlive) {
           updatedCells[rowIndex][columnIndex] =
-            livingNeighboursCount < 2 || livingNeighboursCount > 3
-              ? false
-              : true;
+            livingNeighborsCount < 2 || livingNeighborsCount > 3 ? false : true;
         } else {
           updatedCells[rowIndex][columnIndex] =
-            livingNeighboursCount === 3 ? true : false;
+            livingNeighborsCount === 3 ? true : false;
         }
       });
     });
@@ -127,7 +125,7 @@ export default function GameOfLife() {
   };
 
   /**
-   * Chagnes clicked cell's living state: gives life to the dead cell or kills the living cell.
+   * Changes clicked cell's living state: gives life to the dead cell or kills the living cell.
    * @param {string} clickedCellKey unique key used for locating cell's position (composed of cell's row & column indexes separated by underscore, e.g. "2_1" (3rd row, 2nd column)
    * @returns {void}
    */

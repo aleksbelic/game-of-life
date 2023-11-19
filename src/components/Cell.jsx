@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 export default function Cell(props) {
   return (
     <span
@@ -6,3 +8,8 @@ export default function Cell(props) {
     ></span>
   );
 }
+
+Cell.propTypes = {
+  isAlive: PropTypes.bool.isRequired,
+  updateCellsOnCellClick: PropTypes.func.isRequired,
+};
